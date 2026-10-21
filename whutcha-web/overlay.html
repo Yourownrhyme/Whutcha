@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Blackbox Flight Recorder (Telemetry) -->
+    <script id="flight-recorder">
+        (function() {
+            const SUPABASE_URL = 'https://kjoffilncbybquvjytxx.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';
+            
+            function sendTelemetry(msg, stack, severity = 'error') {
+                try {
+                    // Using native fetch (REST) so it works even if Supabase SDK crashes
+                    fetch(SUPABASE_URL + '/rest/v1/telemetry_logs', {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: msg,
+                            stack_trace: stack || 'No stack trace',
+                            url: window.location.href,
+                            user_agent: navigator.userAgent,
+                            severity: severity
+                        }),
+                        keepalive: true // Send even if user closes the tab mid-crash
+                    }).catch(e => console.error("Telemetry network error"));
+                } catch(e) {}
+            }
+
+            window.onerror = function(message, source, lineno, colno, error) {
+                sendTelemetry(message, error ? error.stack : `${source}:${lineno}:${colno}`);
+                return false;
+            };
+
+            window.addEventListener('unhandledrejection', function(event) {
+                const msg = event.reason ? (event.reason.message || event.reason) : 'Unhandled Promise Rejection';
+                const stack = event.reason ? event.reason.stack : '';
+                sendTelemetry(msg.toString(), stack);
+            });
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whutcha OBS Overlay</title>
+    <link rel="stylesheet" href="style.css?v=51">
+    <link rel="stylesheet" href="cyber-theme.css?v=51">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+    
+    <style>
+        body {
+            background-color: transparent; /* Must be transparent for OBS */
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: flex-end; /* Usually better at bottom or center, let's do center */
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        #widget-container {
+            width: min(1200px, 92vw);
+            height: min(680px, 85vh);
+            max-height: 85vh;
+            background: rgba(8, 10, 15, 0.96);
+            border: 1.5px solid rgba(0, 240, 255, 0.4);
+            border-radius: 24px;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25), 0 0 100px rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.92);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .widget-show {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
+        }
+
+        #media-container {
+            width: 100%;
+            flex: 1 1 0;
+            min-height: 0;
+            background: #040508;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        video.cinematic-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(25px) brightness(0.4);
+            transform: scale(1.1);
+            position: absolute;
+            z-index: 0;
+        }
+        video.cinematic-fg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            z-index: 10;
+            filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
+        }
+
+        /* 🐋 WHALE MODE FX (NODE 2 + NODE 10): Holographic Gold Titanium */
+        .whale-mode-active {
+            border: 2px solid #facc15 !important;
+            box-shadow: 0 0 50px rgba(250, 204, 21, 0.5), inset 0 0 25px rgba(250, 204, 21, 0.2) !important;
+            animation: whalePulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes whalePulse {
+            0% { 
+                box-shadow: 0 0 35px rgba(250, 204, 21, 0.4), inset 0 0 15px rgba(250, 204, 21, 0.15); 
+            }
+            100% { 
+                box-shadow: 0 0 70px rgba(250, 204, 21, 0.7), inset 0 0 35px rgba(250, 204, 21, 0.35); 
+            }
+        }
+
+        .whale-mode-active #donor-amount {
+            color: #facc15 !important;
+            filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.8)) !important;
+        }
+
+        .whale-mode-active #donor-initial {
+            color: #facc15 !important;
+            border-color: rgba(250, 204, 21, 0.6) !important;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.4) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="widget-container">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-[#0a0d14]/90 backdrop-blur-md flex justify-between items-center border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-[#0e131f] border border-[#00f0ff]/40 flex items-center justify-center text-2xl font-black text-[#00f0ff] shadow-[0_0_15px_rgba(0,240,255,0.3)] shrink-0 overflow-hidden font-mono-tech">
+                    <span id="donor-initial">?</span>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981] animate-pulse"></span>
+                        <span class="text-[10px] font-mono-tech text-gray-400 uppercase tracking-widest" id="donation-type">Video Message</span>
+                    </div>
+                    <h2 class="text-2xl font-black text-white tracking-tight truncate max-w-[320px] font-mono-tech" id="donor-name" dir="auto">Viewer</h2>
+                </div>
+            </div>
+            <div class="bg-emerald-500/15 px-6 py-2 rounded-xl border border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.25)] flex items-center">
+                <span id="donor-amount" class="text-3xl font-black text-emerald-400 font-mono-tech drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]">+$0.00</span>
+            </div>
+        </div>
+
+        <!-- Whutcha Live Bridge Media Space -->
+        <div id="media-container"></div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://kjoffilncbybquvjytxx.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const widgetContainer = document.getElementById('widget-container');
+        const mediaContainer = document.getElementById('media-container');
+        
+        let currentRoom = null; 
+        let currentActiveDonation = null;
+        let coStreamSafetyTimer = null;
+        
+        // --- QUEUE SYSTEM ---
+        const alertQueue = [];
+        let isPlaying = false;
+        let isOverlayAudioMuted = false;
+
+        // 🔇 NODE 10: BROADCASTER PANIC AUDIO MUTE HANDLER
+        function setOverlayAudioMute(muted) {
+            isOverlayAudioMuted = Boolean(muted);
+            
+            // 1. Mute/unmute active videos in mediaContainer
+            const mediaVids = mediaContainer.querySelectorAll('video');
+            mediaVids.forEach(v => {
+                v.muted = isOverlayAudioMuted;
+            });
+
+            // 2. Mute/unmute chime if playing
+            if (chimeAudio) chimeAudio.muted = isOverlayAudioMuted;
+
+            // 3. Mute/unmute WebRTC remote tracks if Co-Stream room is active
+            if (currentRoom && currentRoom.remoteParticipants) {
+                currentRoom.remoteParticipants.forEach(p => {
+                    p.audioTrackPublications.forEach(pub => {
+                        if (pub.track && pub.track.mediaStreamTrack) {
+                            pub.track.mediaStreamTrack.enabled = !isOverlayAudioMuted;
+                        }
+                    });
+                });
+            }
+
+            // 4. Update on-screen discreet badge in OBS CEF
+            let badge = document.getElementById('obs-audio-mute-badge');
+            if (isOverlayAudioMuted) {
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.id = 'obs-audio-mute-badge';
+                    badge.className = 'fixed top-4 right-4 z-50 px-3.5 py-1.5 rounded-xl bg-black/85 border border-amber-500/70 text-amber-300 font-mono-tech text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-[0_0_25px_rgba(245,158,11,0.45)] backdrop-blur-md animate-pulse pointer-events-none';
+                    badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>🔇 OVERLAY AUDIO MUTED</span>';
+                    document.body.appendChild(badge);
+                }
+            } else {
+                if (badge) badge.remove();
+            }
+        }
+        window.setOverlayAudioMute = setOverlayAudioMute;
+
+        // Clean synth chime (Base64 to avoid external CDN dependency failures)
+        const chimeAudio = new Audio('data:audio/wav;base64,UklGRmQEAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YSAEAABp/2L/Qv8n/xH/BP/+/uX+y/6r/pj+gv5v/mL+WP5Q/kn+RP5B/kL+RP5I/kz+Uv5Y/mD+av51/oP+jv6b/qb+sv68/sb+0f7b/ub+7/74/gD/CP8R/xr/J/8y/z3/Sf9T/17/af91/4H/i/+V/6D/qv+0/73/xv/P/9j/4f/q//P//P8EAA0AFAAcACUAKwA0ADkAQABHAFAAWQBkAG8AeQCEAIsAkQCVAJsAnQChAKIAogCjAKQApACiAKAAngCZAJQAkACIAIQAdwBsAGEAVgBKAEAAOQAwACcAHgAVAA0ABgD+//j/7P/j/9n/0P/F/73/sv+o/5z/kP+F/3n/bv9m/1//WP9T/0//Tf9K/0f/R/9G/0b/Rv9J/0z/Tv9T/1j/Xf9k/2v/cv96/4P/jP+T/5z/o/+r/7P/vP/E/83/1v/e/+b/7v/2//7/BgAQAxkD');
+
+        // 🐋 WHALE MODE FX: Native Web Audio Synth Fanfare
+        function playWhaleFanfare() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) {
+                    chimeAudio.play().catch(()=>{});
+                    return;
+                }
+                const ctx = new AudioCtx();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 (Major Fanfare)
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
+                    gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.12);
+                    gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + idx * 0.12 + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.85);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.12);
+                    osc.stop(ctx.currentTime + idx * 0.12 + 0.9);
+                });
+            } catch(e) {
+                chimeAudio.play().catch(()=>{});
+            }
+        }
+
+        async function processQueue() {
+            if (isPlaying || alertQueue.length === 0) return;
+            
+            isPlaying = true;
+            const donation = alertQueue.shift();
+            currentActiveDonation = donation;
+            
+            const safeUsername = donation.username || 'Anonymous';
+            document.getElementById('donor-name').innerText = safeUsername;
+            const firstChar = Array.from(safeUsername)[0] || '?';
+            const donorInitialEl = document.getElementById('donor-initial');
+            if (donorInitialEl) {
+                if (donation.avatar_url || safeUsername.includes('Loco')) {
+                    donorInitialEl.innerHTML = `<img src="${donation.avatar_url || './assets/loco-kwokka.jpg'}" alt="Avatar" class="w-full h-full object-cover">`;
+                } else {
+                    donorInitialEl.innerText = firstChar.toUpperCase();
+                }
+            }
+            document.getElementById('donor-amount').innerText = `+$${parseFloat(donation.amount || 0).toFixed(2)}`;
+            
+            // STYKER FIX: Co-Stream detection must check join_token and JWT tokens as well as costream string
+            const isCoStream = Boolean(
+                donation.join_token || 
+                (donation.video_hash && donation.video_hash.startsWith('eyJ')) || 
+                (donation.videoHash || donation.video_hash || '').toLowerCase().includes("costream")
+            );
+
+            // 🐋 WHALE MODE FX: Check VIP tier ($50+)
+            const amount = parseFloat(donation.amount || 0);
+            const isWhale = amount >= 50;
+
+            if (isWhale) {
+                widgetContainer.classList.add('whale-mode-active');
+                document.getElementById('donation-type').innerHTML = `
+                    <span class="text-yellow-400 font-black flex items-center gap-1 font-mono-tech tracking-wider">
+                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"></path></svg>
+                        VIP ALERT ${isCoStream ? '• CO-STREAM' : '• VIDEO'}
+                    </span>
+                `;
+                playWhaleFanfare();
+            } else {
+                widgetContainer.classList.remove('whale-mode-active');
+                document.getElementById('donation-type').innerText = isCoStream ? "Live Co-Stream" : "Video Message";
+                chimeAudio.volume = 0.5;
+                chimeAudio.play().catch(e => console.log("Sound autoplay blocked by OBS"));
+            }
+
+            widgetContainer.classList.add('widget-show');
+
+            if (isCoStream) {
+                const livekitToken = (donation.video_hash && donation.video_hash !== 'costream_request' && !donation.video_hash.endsWith('.mp4')) ? donation.video_hash : donation.join_token;
+                if (livekitToken && livekitToken.startsWith('eyJ')) {
+                    await connectCoStream(livekitToken);
+                } else if ((donation.video_hash || donation.videoHash || '').includes('loco') || (donation.video_hash || donation.videoHash || '').endsWith('.mp4')) {
+                    // Simulated Co-Stream video (Loco Kwokka Call)
+                    playVideoMessage(donation.video_hash || donation.videoHash);
+                } else {
+                    hideWidget(); // Failsafe
+                }
+            } else {
+                playVideoMessage(donation.videoHash || donation.video_hash);
+            }
+        }
+
+        function hideWidget() {
+            if (coStreamSafetyTimer) {
+                clearTimeout(coStreamSafetyTimer);
+                coStreamSafetyTimer = null;
+            }
+            widgetContainer.classList.remove('widget-show');
+            widgetContainer.classList.remove('whale-mode-active');
+            setTimeout(() => {
+                // VAMPIRE MODE: Destroy video & audio buffers
+                const mediaEls = mediaContainer.querySelectorAll('video, audio');
+                mediaEls.forEach(v => { 
+                    try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){} 
+                });
+                mediaContainer.innerHTML = ''; 
+                if (currentRoom) {
+                    try { currentRoom.disconnect(); } catch(e){}
+                    currentRoom = null;
+                }
+                currentActiveDonation = null;
+                isPlaying = false;
+                processQueue(); // Process next in line
+            }, 500); // Wait for transition
+        }
+
+        // 🚨 EMERGENCY BLACKOUT ENGINE (NODE 10 KILL-SWITCH)
+        function emergencyBlackout() {
+            console.warn("🚨 OBS: EMERGENCY BLACKOUT TRIGGERED BY DASHBOARD!");
+            
+            // 1. Instant Audio Cut (0ms latency)
+            try {
+                if (chimeAudio) {
+                    chimeAudio.pause();
+                    chimeAudio.currentTime = 0;
+                }
+            } catch(e){}
+
+            const mediaEls = mediaContainer.querySelectorAll('video, audio');
+            mediaEls.forEach(v => { 
+                try {
+                    v.muted = true;
+                    v.volume = 0;
+                    v.pause();
+                    v.removeAttribute('src');
+                    v.load();
+                } catch(e){} 
+            });
+            
+            // 2. Disconnect WebRTC Co-Stream immediately
+            if (currentRoom) {
+                try { currentRoom.disconnect(); } catch(e){}
+                currentRoom = null;
+            }
+
+            if (coStreamSafetyTimer) {
+                clearTimeout(coStreamSafetyTimer);
+                coStreamSafetyTimer = null;
+            }
+
+            // 3. Clear DOM & in-flight Queue
+            mediaContainer.innerHTML = ''; 
+            alertQueue.length = 0;
+            currentActiveDonation = null;
+            isPlaying = false;
+
+            // 4. Force blackout
+            widgetContainer.classList.remove('widget-show');
+            widgetContainer.classList.remove('whale-mode-active');
+            widgetContainer.style.opacity = '0';
+            setTimeout(() => {
+                widgetContainer.style.opacity = '';
+            }, 600);
+        }
+
+        
+        async function playVideoMessage(videoHash) {
+            // VAMPIRE MODE: Hard-stop any existing videos before wiping DOM to prevent OBS CEF memory leaks
+            const oldVideos = mediaContainer.querySelectorAll('video, audio');
+            oldVideos.forEach(vid => { 
+                try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch(e){} 
+            });
+            mediaContainer.innerHTML = ''; 
+            
+            // FETCH SECURE SIGNED URL (Valid for 60s) with local fallback
+            let videoUrl = null;
+            if (videoHash && (videoHash.startsWith('http') || videoHash.startsWith('./') || videoHash.startsWith('/'))) {
+                videoUrl = videoHash;
+            } else if (videoHash && videoHash.includes('loco-kwokka')) {
+                videoUrl = `./assets/${videoHash}?v=60`;
+            } else {
+                const { data, error } = await supabaseClient.storage.from('videos').createSignedUrl(videoHash, 60);
+                if (data && data.signedUrl) {
+                    videoUrl = data.signedUrl;
+                } else {
+                    videoUrl = `./assets/${videoHash}`;
+                }
+            }
+            
+            // Safety timeout: max 35s to prevent overlay hanging forever if video stalls
+            let safetyTimer = setTimeout(() => {
+                console.warn("OBS: Video timeout reached, auto-closing");
+                hideWidget();
+            }, 35000);
+
+            // Background Blurred Video
+            const bgVideo = document.createElement('video');
+            bgVideo.src = videoUrl;
+            bgVideo.autoplay = true;
+            bgVideo.muted = true; // Muted so we don't play audio twice
+            bgVideo.playsInline = true;
+            bgVideo.className = 'cinematic-bg';
+            
+            // Foreground Clear Video
+            const fgVideo = document.createElement('video');
+            fgVideo.src = videoUrl;
+            fgVideo.autoplay = true;
+            fgVideo.playsInline = true;
+            fgVideo.className = 'cinematic-fg';
+            
+            fgVideo.onended = () => { clearTimeout(safetyTimer); hideWidget(); };
+            fgVideo.onerror = () => { clearTimeout(safetyTimer); console.error("OBS: Video failed to play"); hideWidget(); };
+            
+            mediaContainer.appendChild(bgVideo);
+            mediaContainer.appendChild(fgVideo);
+
+            if (isOverlayAudioMuted) {
+                fgVideo.muted = true;
+            }
+
+            fgVideo.play().catch(err => {
+                console.warn("OBS autoplay blocked unmuted, retrying muted:", err);
+                fgVideo.muted = true;
+                fgVideo.play().catch(e => console.error("OBS cannot play video"));
+            });
+            bgVideo.play().catch(()=>{});
+        }
+
+
+        async function connectCoStream(token) {
+            mediaContainer.innerHTML = '<div class="text-white text-base font-mono-tech animate-pulse font-bold tracking-widest uppercase flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#a800ff]"></span>Connecting to fan via WebRTC...</div>';
+            
+            try {
+                currentRoom = new LiveKitClient.Room();
+                
+                // IMPORTANT: We do NOT enable camera/mic here. Overlay is viewer-only.
+                currentRoom.on('trackSubscribed', (track) => {
+                    if (track.kind === 'video' || track.kind === 'audio') {
+                        const element = track.attach();
+                        if(track.kind === 'video') {
+                            mediaContainer.innerHTML = ''; 
+                            element.className = "w-full h-full object-cover";
+                            mediaContainer.appendChild(element);
+                        }
+                    }
+                });
+
+                // Participant disconnected listener (e.g. caller or streamer hung up)
+                currentRoom.on('participantDisconnected', () => {
+                    if (!currentRoom || currentRoom.remoteParticipants.size === 0) {
+                        hideWidget();
+                    }
+                });
+
+                // If Streamer clicks "Drop Caller" in dashboard, room dies, this triggers!
+                currentRoom.on('disconnected', () => {
+                    hideWidget();
+                });
+
+                if (coStreamSafetyTimer) clearTimeout(coStreamSafetyTimer);
+                coStreamSafetyTimer = setTimeout(() => {
+                    console.warn("OBS: Co-Stream SLA hard timeout (90s) reached, auto-closing");
+                    hideWidget();
+                }, 90000);
+
+                await currentRoom.connect('wss://whutcha-drgxd8d7.livekit.cloud', token);
+
+            } catch (error) {
+                console.error("[Whutcha Live Bridge 500]: Co-Stream Gateway Connection Error:", error);
+                mediaContainer.innerHTML = '<div class="text-red-500 font-mono-tech text-base font-bold uppercase">Connection Failed</div>';
+                setTimeout(hideWidget, 3000);
+            }
+        }
+
+        function startListening() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let streamerId = urlParams.get('streamer');
+            
+            // NINJA MODE: Secure Widget Decoding
+            const widgetToken = urlParams.get('widget');
+            if (widgetToken) {
+                try {
+                    const payload = JSON.parse(atob(widgetToken));
+                    streamerId = payload.sid;
+                } catch(e) {
+                    console.error("[Whutcha Broadcast Gateway 401]: Invalid Secure Widget Token");
+                    return;
+                }
+            }
+            
+            if(!streamerId || streamerId === 'default') {
+                console.error("[Whutcha Broadcast Gateway 400]: Invalid Broadcaster Identifier");
+                return;
+            }
+            
+            console.log(`OBS Overlay active for: ${streamerId}`);
+            
+            function triggerObsTestAlert() {
+                if (isPlaying) return;
+                isPlaying = true;
+                
+                document.getElementById('donor-name').innerText = "OBS Studio (CEF)";
+                document.getElementById('donor-initial').innerText = "✓";
+                document.getElementById('donor-amount').innerText = "+$1.00 TEST";
+                document.getElementById('donation-type').innerText = `Signal Verified (${window.innerWidth}x${window.innerHeight})`;
+                
+                mediaContainer.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center bg-black/90 p-6 text-center font-mono-tech relative overflow-hidden">
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shadow-[0_0_30px_rgba(0,240,255,0.6)] mb-3">
+                            <img src="./assets/loco-kwokka.jpg" alt="Loco Kwokka" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-white text-xl font-black uppercase tracking-wider mb-1">OBS Overlay Operational!</h3>
+                        <p class="text-emerald-400 text-xs font-bold tracking-widest uppercase">Signal 1080p • Audio Mix Verified</p>
+                    </div>
+                `;
+                
+                widgetContainer.classList.add('widget-show');
+                chimeAudio.volume = 0.6;
+                chimeAudio.play().catch(()=>{});
+                
+                setTimeout(() => {
+                    hideWidget();
+                }, 4000);
+            }
+
+            const obsChannel = supabaseClient
+                .channel('obs-overlay-' + streamerId)
+                .on('broadcast', { event: 'ping_test' }, () => {
+                    console.log("OBS: Received Test Ping from Dashboard");
+                    triggerObsTestAlert();
+                })
+                .on('broadcast', { event: 'request_heartbeat' }, () => {
+                    sendHeartbeat();
+                })
+                .on('broadcast', { event: 'obs_panic_blackout' }, () => {
+                    emergencyBlackout();
+                })
+                .on('broadcast', { event: 'obs_toggle_mute' }, (data) => {
+                    const isMuted = data && data.payload ? data.payload.isMuted : !isOverlayAudioMuted;
+                    setOverlayAudioMute(isMuted);
+                })
+                .on('broadcast', { event: 'video_approved' }, (data) => {
+                    if (data && data.payload) {
+                        alertQueue.push({
+                            id: data.payload.id || 'sim-' + Date.now(),
+                            username: data.payload.username || 'Loco Kwokka 🧢',
+                            amount: data.payload.amount || 1.00,
+                            video_hash: data.payload.video_hash || data.payload.videoHash || 'loco-kwokka-donation.mp4',
+                            status: 'approved'
+                        });
+                        processQueue();
+                    }
+                })
+                .on('broadcast', { event: 'costream_approved' }, (data) => {
+                    if (data && data.payload) {
+                        alertQueue.push({
+                            id: data.payload.id || 'sim-' + Date.now(),
+                            username: data.payload.username || 'Loco Kwokka 📞',
+                            amount: data.payload.amount || 50.00,
+                            video_hash: data.payload.video_hash || data.payload.videoHash || 'loco-kwokka-costream.mp4',
+                            status: 'approved',
+                            isCoStream: true
+                        });
+                        processQueue();
+                    }
+                });
+
+            // Local Cross-Tab Broadcast Channel (Zero-Latency Local / Sandbox Fallback)
+            let localObsBc = null;
+            try {
+                localObsBc = new BroadcastChannel('whutcha_obs_channel_' + streamerId);
+                localObsBc.onmessage = (ev) => {
+                    const { event, payload } = ev.data || {};
+                    if (event === 'video_approved') {
+                        alertQueue.push({
+                            id: payload.id || 'sim-' + Date.now(),
+                            username: payload.username || 'Loco Kwokka 🧢',
+                            amount: payload.amount || 1.00,
+                            video_hash: payload.video_hash || payload.videoHash || 'loco-kwokka-donation.mp4',
+                            status: 'approved'
+                        });
+                        processQueue();
+                    } else if (event === 'costream_approved') {
+                        alertQueue.push({
+                            id: payload.id || 'sim-' + Date.now(),
+                            username: payload.username || 'Loco Kwokka 📞',
+                            amount: payload.amount || 50.00,
+                            video_hash: payload.video_hash || payload.videoHash || 'loco-kwokka-costream.mp4',
+                            status: 'approved',
+                            isCoStream: true
+                        });
+                        processQueue();
+                    } else if (event === 'obs_panic_blackout') {
+                        emergencyBlackout();
+                    } else if (event === 'obs_toggle_mute') {
+                        const isMuted = payload ? payload.isMuted : !isOverlayAudioMuted;
+                        setOverlayAudioMute(isMuted);
+                    } else if (event === 'ping_test') {
+                        triggerObsTestAlert();
+                    } else if (event === 'request_heartbeat') {
+                        sendHeartbeat();
+                    }
+                };
+            } catch(e){}
+
+            obsChannel
+                .on('postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'donations',
+                    filter: `streamer_id=eq.${streamerId}` 
+                }, payload => {
+                    const donation = payload.new;
+                    if (donation.status === 'completed' || donation.status === 'rejected') {
+                        if (currentActiveDonation && currentActiveDonation.id === donation.id) {
+                            hideWidget();
+                        }
+                        return;
+                    }
+                    if (donation.status !== 'approved') return;
+                    
+                    // Push to queue and process
+                    alertQueue.push(donation);
+                    processQueue();
+                });
+
+            function sendHeartbeat() {
+                const hbPayload = {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    isObs: Boolean(window.obsstudio || navigator.userAgent.includes('OBS')),
+                    timestamp: Date.now()
+                };
+                if (localObsBc) {
+                    try { localObsBc.postMessage({ event: 'obs_heartbeat', payload: hbPayload }); } catch(e){}
+                }
+                obsChannel.send({
+                    type: 'broadcast',
+                    event: 'obs_heartbeat',
+                    payload: hbPayload
+                }).catch(() => {});
+            }
+
+            // Send immediate local heartbeat on boot
+            sendHeartbeat();
+
+            obsChannel.subscribe((status) => {
+                console.log(`OBS Realtime Status: ${status}`);
+                if (status === 'SUBSCRIBED') {
+                    sendHeartbeat();
+                    setInterval(sendHeartbeat, 10000);
+                }
+                if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR') {
+                    setTimeout(() => { obsChannel.subscribe(); }, 3000);
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                obsChannel.send({
+                    type: 'broadcast',
+                    event: 'obs_disconnected',
+                    payload: { timestamp: Date.now() }
+                }).catch(()=>{});
+            });
+        }
+
+        startListening();
+    </script>
+</body>
+</html>

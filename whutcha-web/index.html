@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Whutcha - Next-Gen Streamer Protocol</title>
+    <meta name="description" content="Whutcha is the elite 2026 platform for Video-Donations and Instant Co-Streams.">
+
+    <!-- SEAGULL MODE: OpenGraph / Twitter Cards (1200x630 Large Card Standard) -->
+    <meta property="og:title" content="Whutcha - Zero-TOS Video Donations & Live Co-Streams">
+    <meta property="og:description" content="The elite broadcast platform. Pre-moderated OBS video queue, instant WebRTC fan Co-Streams, and auto-minted reaction Shorts for TikTok.">
+    <meta property="og:image" content="https://whutcha.com/og-banner.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:url" content="https://whutcha.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Whutcha">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Whutcha - Zero-TOS Video Donations & Live Co-Streams">
+    <meta name="twitter:description" content="Pre-moderated OBS video queue, instant WebRTC fan Co-Streams, and auto-minted reaction Shorts for TikTok.">
+    <meta name="twitter:image" content="https://whutcha.com/og-banner.jpg">
+
+    <meta name="theme-color" content="#060709">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Whutcha">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <link rel="manifest" href="./manifest.json">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css?v=51">
+    <link rel="stylesheet" href="cyber-theme.css?v=51">
+    
+    <style>
+        body { 
+            background-color: var(--cyber-bg); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .text-glow-cyan {
+            text-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+        }
+        .text-glow-magenta {
+            text-shadow: 0 0 25px rgba(168, 0, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-[#060709] min-h-screen relative overflow-x-hidden flex flex-col justify-start selection:bg-[#00f0ff]/30">
+    
+    <!-- Ambient Tech Glows (Optimized 60fps GPU Compositing) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="transform: translateZ(0); will-change: transform;">
+        <div class="absolute inset-0 bg-[radial-gradient(#151926_1px,transparent_1px)] [background-size:28px_28px] opacity-20"></div>
+        <div class="absolute top-[2%] left-[10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.09)_0%,rgba(0,240,255,0)_70%)] pointer-events-none"></div>
+        <div class="absolute bottom-[2%] right-[10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(168,0,255,0.08)_0%,rgba(168,0,255,0)_70%)] pointer-events-none"></div>
+    </div>
+
+    <!-- MAIN ACCESS SCREEN -->
+    <div id="auth-screen" class="w-full min-h-screen z-10 flex flex-col md:flex-row overflow-y-auto relative items-start justify-center pt-4 sm:pt-6 md:pt-8">
+        
+        <!-- LEFT SIDE: Broadcaster Hero Display -->
+        <div class="hidden md:flex md:w-1/2 relative flex-col justify-start pt-2 pb-8 px-8 lg:px-16 xl:px-20 z-20">
+            <!-- Brand Badge (Pinned to Top) -->
+            <div class="flex items-center gap-5 mb-8">
+                <div class="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br from-[#00f0ff] via-[#a800ff] to-[#00f0ff] p-[2.5px] shadow-[0_0_35px_rgba(0,240,255,0.4)] flex-shrink-0 group">
+                    <div class="w-full h-full bg-[#0a0c12] rounded-[13px] flex items-center justify-center overflow-hidden p-2 border border-white/10 group-hover:scale-105 transition-transform duration-300">
+                        <img src="./icon.svg" alt="Whutcha Logo" width="64" height="64" fetchpriority="high" decoding="async" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <div class="flex items-center">
+                        <span class="text-4xl lg:text-5xl font-black tracking-wider text-white leading-none">
+                            <span class="text-[#00f0ff] text-glow-cyan">W</span>HUTCHA
+                        </span>
+                    </div>
+                    <!-- Ultra-Sleek Cyberpunk Titanium Plaque (High-Precision Radar Telemetry) -->
+                    <div class="mt-2.5 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#070b14] via-[#0d1624] to-[#070b14] border border-[#00f0ff]/60 shadow-[0_0_20px_rgba(0,240,255,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)] w-fit backdrop-blur-md">
+                        <div class="flex items-center gap-1">
+                            <span class="w-1 h-3 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff] animate-pulse"></span>
+                            <span class="w-1 h-2 rounded-full bg-[#00f0ff]/80"></span>
+                            <span class="w-1 h-3.5 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff]"></span>
+                        </div>
+                        <span class="text-[11px] lg:text-xs font-mono-tech tracking-[0.22em] font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] via-white to-[#00f0ff] text-glow-cyan select-none">WHUTCHA, DAWG?!</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Hero Pitch -->
+            <div class="py-2">
+                <h1 class="text-4xl sm:text-5xl md:text-5xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[0.95] uppercase">
+                    Bypass The <br>
+                    <span class="bg-gradient-to-r from-[#00f0ff] via-[#a800ff] to-white bg-clip-text text-transparent">Boring TTS.</span>
+                </h1>
+
+                <p class="text-base lg:text-lg text-gray-400 font-medium max-w-lg leading-relaxed mb-6">
+                    Monetize real emotions with live WebRTC Co-Streams and pre-moderated Video-Donations directly inside your OBS broadcast.
+                </p>
+
+                <div class="mb-8 flex items-center gap-3">
+                    <a href="./leaderboard.html" class="group inline-flex items-center gap-3 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-white/[0.04] to-transparent hover:from-amber-500/20 hover:to-white/[0.08] border border-amber-400/30 hover:border-amber-400 text-white transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400/25 to-amber-600/15 border border-amber-400/50 text-amber-300 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.35)] group-hover:scale-110 transition-transform flex-shrink-0">
+                            <svg class="w-4 h-4 text-amber-400 group-hover:text-amber-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 4h10l-1.5 8a4 4 0 0 1-7 0L7 4z" fill="currentColor" fill-opacity="0.25"/>
+                                <path d="M7 6H3.5a1.5 1.5 0 0 0-1.5 1.5v1A3.5 3.5 0 0 0 5.5 12H7"/>
+                                <path d="M17 6h3.5a1.5 1.5 0 0 1 1.5 1.5v1a3.5 3.5 0 0 1-3.5 3.5H17"/>
+                                <path d="M12 15v4"/>
+                                <path d="M8 21h8"/>
+                                <circle cx="12" cy="8" r="1.5" fill="currentColor" stroke="none"/>
+                            </svg>
+                        </div>
+                        <span class="font-mono-tech text-xs font-bold uppercase tracking-wider text-gray-200 group-hover:text-amber-300 transition-colors">Explore Creators &amp; Leaderboard</span>
+                        <svg class="w-3.5 h-3.5 text-amber-400/70 group-hover:text-amber-300 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                <!-- 4 Killer Feature Pillars (Modern Cyber Chassis) -->
+                <div class="grid grid-cols-2 gap-4 max-w-xl font-mono-tech text-xs">
+                    <!-- 1. Video Donations -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-[#121622] via-[#0d1017] to-black border border-white/10 hover:border-[#00f0ff]/60 transition-all duration-300 group relative shadow-[0_10px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(0,240,255,0.2)]">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/40 flex items-center justify-center text-[#00f0ff] shadow-[0_0_12px_rgba(0,240,255,0.25)] group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <span class="text-white font-black uppercase tracking-wider text-xs group-hover:text-[#00f0ff] transition-colors">Video Messages</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[8px] font-mono-tech font-bold uppercase tracking-wider bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/30">SHIELD</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 group-hover:text-gray-300 leading-relaxed font-sans transition-colors">
+                            Zero-TOS staging queue. Pre-moderate fan videos in your cockpit before OBS plays live.
+                        </p>
+                    </div>
+
+                    <!-- 2. Universal Co-Streams -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-[#181324] via-[#0d1017] to-black border border-white/10 hover:border-[#a800ff]/60 transition-all duration-300 group relative shadow-[0_10px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(168,0,255,0.2)]">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-[#a800ff]/10 border border-[#a800ff]/40 flex items-center justify-center text-[#a800ff] shadow-[0_0_12px_rgba(168,0,255,0.25)] group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l5-3v10l-5-3"/><rect x="2" y="6" width="13" height="12" rx="2"/></svg>
+                                </div>
+                                <span class="text-white font-black uppercase tracking-wider text-xs group-hover:text-[#a800ff] transition-colors">Live Co-Streams</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[8px] font-mono-tech font-bold uppercase tracking-wider bg-[#a800ff]/10 text-[#a800ff] border border-[#a800ff]/30">60 FPS</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 group-hover:text-gray-300 leading-relaxed font-sans transition-colors">
+                            Instant WebRTC fan camera guest calls directly into your OBS layout without lag.
+                        </p>
+                    </div>
+
+                    <!-- 3. Reaction Engine -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-[#1c1610] via-[#0d1017] to-black border border-white/10 hover:border-amber-400/60 transition-all duration-300 group relative shadow-[0_10px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)] group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                                </div>
+                                <span class="text-white font-black uppercase tracking-wider text-xs group-hover:text-amber-400 transition-colors">Reaction Shorts</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[8px] font-mono-tech font-bold uppercase tracking-wider bg-amber-400/10 text-amber-300 border border-amber-400/30">9:16</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 group-hover:text-gray-300 leading-relaxed font-sans transition-colors">
+                            Auto-records your raw reaction in vertical 1080p. One-click export for TikTok &amp; Reels.
+                        </p>
+                    </div>
+
+                    <!-- 4. 0% Cut P2P -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-[#0e1c17] via-[#0d1017] to-black border border-white/10 hover:border-emerald-400/60 transition-all duration-300 group relative shadow-[0_10px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-400/10 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.25)] group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                                <span class="text-white font-black uppercase tracking-wider text-xs group-hover:text-emerald-400 transition-colors">0% Platform Cut</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[8px] font-mono-tech font-bold uppercase tracking-wider bg-emerald-400/10 text-emerald-300 border border-emerald-400/30">DIRECT</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 group-hover:text-gray-300 leading-relaxed font-sans transition-colors">
+                            P2P payouts via PayPal, Stripe, CashApp, Boosty. You keep 100% of all fan tips.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: Broadcaster Sign In -->
+        <div class="w-full md:w-1/2 flex flex-col items-center justify-start p-6 sm:p-10 lg:p-14 relative z-30 pt-2 sm:pt-4 pb-8">
+            
+            <!-- Mobile Brand Header (Pinned to Top) -->
+            <div class="md:hidden text-center mb-6 flex flex-col items-center">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f0ff] via-[#a800ff] to-[#00f0ff] p-[2.5px] shadow-[0_0_35px_rgba(0,240,255,0.45)] mb-3 flex-shrink-0">
+                    <div class="w-full h-full bg-[#0a0c12] rounded-[13px] flex items-center justify-center overflow-hidden p-2 border border-white/10">
+                        <img src="./icon.svg" alt="Whutcha Logo" width="56" height="56" fetchpriority="high" decoding="async" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black tracking-wider text-white flex items-center justify-center">
+                    <span class="text-[#00f0ff] text-glow-cyan">W</span>HUTCHA
+                </h1>
+                <!-- Ultra-Sleek Cyberpunk Titanium Plaque (High-Precision Radar Telemetry) -->
+                <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#070b14] via-[#0d1624] to-[#070b14] border border-[#00f0ff]/60 shadow-[0_0_16px_rgba(0,240,255,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)] backdrop-blur-md">
+                    <div class="flex items-center gap-1">
+                        <span class="w-1 h-2.5 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff] animate-pulse"></span>
+                        <span class="w-1 h-1.5 rounded-full bg-[#00f0ff]/80"></span>
+                        <span class="w-1 h-3 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff]"></span>
+                    </div>
+                    <span class="text-[10px] font-mono-tech tracking-[0.2em] font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] via-white to-[#00f0ff] text-glow-cyan select-none">WHUTCHA, DAWG?!</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+                </div>
+            </div>
+
+            <!-- ESCROW BOUNTY ALERT CARD (Appears when ?claim=... is visited) -->
+            <div id="escrow-landing-card" class="hidden w-full max-w-[460px] mb-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-500/15 via-[#0d1017] to-[#00f0ff]/10 border-2 border-amber-400/80 shadow-[0_0_40px_rgba(245,158,11,0.25)] flex flex-col gap-3 relative overflow-hidden backdrop-blur-xl">
+                <!-- Dismiss button -->
+                <button type="button" onclick="document.getElementById('escrow-landing-card').remove();" aria-label="Dismiss Claim Banner" class="absolute top-3 right-3 text-gray-400 hover:text-white p-1 rounded-lg bg-black/40 hover:bg-black/70 border border-white/10 transition-colors z-20 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="flex items-center gap-3.5 pr-6">
+                    <div id="escrow-avatar-box" class="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] shrink-0 bg-black/70 flex items-center justify-center text-amber-300 font-bold text-lg font-mono-tech">
+                        <img id="escrow-avatar-img" src="./assets/loco-kwokka.jpg" alt="Broadcaster" width="48" height="48" fetchpriority="low" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5 mb-0.5">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                            <span class="text-[9px] font-mono-tech font-black text-amber-400 uppercase tracking-widest">CREATOR CLAIM INVITATION</span>
+                        </div>
+                        <h3 class="text-white font-black text-sm sm:text-base uppercase truncate max-w-[280px]" id="escrow-landing-title">Pending Video Donation</h3>
+                        <p class="text-[10px] text-gray-400 font-mono-tech mt-0.5">Direct Broadcaster Payouts • 0% Platform Fee</p>
+                    </div>
+                </div>
+
+                <!-- 3 Key Features (Responsive & Overflow-Proof) -->
+                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 font-mono-tech text-[10px]">
+                    <div class="bg-black/50 p-2 rounded-lg border border-white/10 text-center flex flex-col justify-center min-h-[46px]">
+                        <span class="block text-emerald-400 font-bold text-[11px] leading-tight">🛡️ Safe</span>
+                        <span class="text-gray-400 text-[8px] sm:text-[9px] uppercase tracking-tight">Pre-mod</span>
+                    </div>
+                    <div class="bg-black/50 p-2 rounded-lg border border-white/10 text-center flex flex-col justify-center min-h-[46px]">
+                        <span class="block text-[#00f0ff] font-bold text-[11px] leading-tight">📞 Call</span>
+                        <span class="text-gray-400 text-[8px] sm:text-[9px] uppercase tracking-tight">Co-Stream</span>
+                    </div>
+                    <div class="bg-black/50 p-2 rounded-lg border border-white/10 text-center flex flex-col justify-center min-h-[46px]">
+                        <span class="block text-[#a800ff] font-bold text-[11px] leading-tight">🎬 9:16</span>
+                        <span class="text-gray-400 text-[8px] sm:text-[9px] uppercase tracking-tight">Shorts</span>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-gray-300 font-mono-tech leading-relaxed bg-black/60 p-2.5 rounded-xl border border-white/10" id="escrow-landing-desc">
+                    A viewer submitted a video donation for your channel! Register or sign in below to moderate in the green room and broadcast live to OBS.
+                </div>
+            </div>
+
+            <!-- Sign In Card -->
+            <div class="w-full max-w-[460px] cyber-rack cyber-border-dual p-5 sm:p-8 md:p-10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative backdrop-blur-md">
+                
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
+                    <h2 class="text-xl sm:text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#00f0ff] shadow-[0_0_10px_#00f0ff]"></span>
+                        <span id="auth-title-text">Streamer Sign In</span>
+                    </h2>
+                </div>
+                
+                <!-- Error Banner -->
+                <div id="auth-error" class="hidden mb-5 p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-mono-tech font-bold text-center"></div>
+
+                <!-- Email / Pass Form (Real HTML Form with Enter Key Support) -->
+                <form id="auth-form" onsubmit="event.preventDefault(); if(typeof window.handleAuthFormSubmit==='function') window.handleAuthFormSubmit(event);" class="space-y-4 relative z-10" autocomplete="on">
+                    <div>
+                        <label for="auth-email" class="flex items-center gap-1.5 text-[11px] font-mono-tech text-gray-300 uppercase tracking-wider mb-2 cursor-pointer font-bold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff]"></span>
+                            <span>Email</span>
+                        </label>
+                        <input type="email" id="auth-email" name="email" autocomplete="email" enterkeyhint="next" aria-label="Email Address" required placeholder="streamer@gmail.com" class="w-full bg-black/60 border border-white/15 focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] rounded-xl px-4 py-3.5 text-white text-xs font-mono-tech transition-all outline-none placeholder-gray-600 shadow-inner">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="auth-password" class="flex items-center gap-1.5 text-[11px] font-mono-tech text-gray-300 uppercase tracking-wider cursor-pointer font-bold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#a800ff] shadow-[0_0_6px_#a800ff]"></span>
+                                <span>Password</span>
+                            </label>
+                            <button type="button" id="btn-forgot-password" class="text-xs font-mono-tech text-gray-400 hover:text-[#00f0ff] transition-colors font-bold underline-offset-4 hover:underline">Forgot?</button>
+                        </div>
+                        <input type="password" id="auth-password" name="password" autocomplete="current-password" enterkeyhint="go" aria-label="Password" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/15 focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] rounded-xl px-4 py-3.5 text-white text-xs font-mono-tech transition-all outline-none placeholder-gray-600 shadow-inner">
+                    </div>
+                    
+                    <!-- High-Impact Sign In & Register Buttons -->
+                    <div class="grid grid-cols-2 gap-3.5 pt-2">
+                        <button type="submit" id="btn-email-signin" class="w-full py-4 rounded-xl font-black text-sm bg-gradient-to-r from-[#00f0ff] via-[#2ce6ff] to-[#00d0ff] hover:from-[#4df4ff] hover:to-[#00f0ff] text-black transition-all shadow-[0_0_25px_rgba(0,240,255,0.45)] hover:shadow-[0_0_35px_rgba(0,240,255,0.65)] uppercase tracking-wider active:scale-95 cursor-pointer">
+                            Sign In
+                        </button>
+                        <button type="button" id="btn-email-signup" class="w-full py-4 rounded-xl font-black text-sm bg-white/5 hover:bg-white/15 text-white border-2 border-white/20 hover:border-[#00f0ff]/60 transition-all uppercase tracking-wider active:scale-95 cursor-pointer shadow-sm">
+                            Register
+                        </button>
+                    </div>
+                    
+                    <!-- Interactive Demo Button with Seamless Instant Launch -->
+                    <div class="relative group pt-2">
+                        <button type="button" onclick="sessionStorage.setItem('whutcha_just_logged_in', 'true'); sessionStorage.removeItem('whutcha_dive_seen'); localStorage.setItem('streamerID', 'demo_broadcaster'); localStorage.setItem('whutcha_observer_mode', 'true'); window.location.href='./dashboard.html';" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-black to-[#00f0ff]/10 hover:from-amber-500/20 hover:to-[#00f0ff]/20 border border-white/15 hover:border-[#00f0ff]/70 text-white transition-all duration-200 flex items-center justify-between px-4 group shadow-md hover:shadow-[0_0_25px_rgba(0,240,255,0.2)] active:scale-[0.98] cursor-pointer">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 flex items-center justify-center text-sm shadow-[0_0_10px_rgba(245,158,11,0.25)] group-hover:scale-110 transition-transform">⚡</span>
+                                <div class="text-left">
+                                    <span class="font-mono-tech text-xs font-black tracking-wider uppercase text-white block">Try Live Demo</span>
+                                    <span class="text-[10px] text-gray-400 font-mono-tech block">1-Click Instant Studio Sandbox</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono-tech font-bold uppercase tracking-widest text-[#00f0ff] bg-[#00f0ff]/10 px-2 py-0.5 rounded border border-[#00f0ff]/30 group-hover:border-[#00f0ff] group-hover:bg-[#00f0ff]/20 transition-all flex items-center gap-1">
+                                <span>LAUNCH</span>
+                                <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+                            </span>
+                        </button>
+                        <!-- Tooltip explaining Demo Mode -->
+                        <div class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-80 p-3 rounded-xl bg-[#0a0c14]/95 border border-[#00f0ff]/40 text-gray-200 text-xs font-sans leading-relaxed shadow-[0_15px_40px_rgba(0,0,0,0.95)] opacity-0 group-hover:opacity-100 transition-all duration-200 z-50 text-center backdrop-blur-xl">
+                            <span class="text-[#00f0ff] font-bold font-mono-tech block mb-1 uppercase tracking-wider text-[11px]">⚡ Interactive Demo Studio</span>
+                            Test the streamer dashboard, moderation queue, OBS overlay, and Co-Stream room right now without creating an account.
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative flex items-center justify-center my-6">
+                    <div class="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    <span class="relative bg-[#0d1017] px-4 font-mono-tech text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Or Fast Connect Via</span>
+                </div>
+
+                <!-- Whutcha Stream Deck OAuth Controls (Google & GitHub) -->
+                <div class="space-y-3">
+                    <!-- Google Stream Deck Key -->
+                    <button type="button" onclick="window.signInOAuth('google')" class="group relative w-full p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-white/[0.07] via-white/[0.03] to-transparent hover:from-[#00f0ff]/15 hover:via-white/[0.06] hover:to-[#00f0ff]/5 border border-white/15 hover:border-[#00f0ff]/60 flex items-center justify-between gap-2.5 sm:gap-3 transition-all duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(0,240,255,0.25)] active:scale-[0.99] cursor-pointer text-left overflow-hidden">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-black/60 border border-white/20 group-hover:border-[#00f0ff]/60 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all">
+                                <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0112 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/><path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 01-6.723-4.823l-4.04 3.067A11.965 11.965 0 0012 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987z"/><path fill="#4A90E2" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21z"/><path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 014.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 000 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-xs sm:text-sm text-white tracking-wide group-hover:text-[#00f0ff] transition-colors whitespace-nowrap">Continue with Google</div>
+                                <div class="text-[10px] text-gray-400 font-mono-tech tracking-wider uppercase truncate">Instant 1-Click Streamer Access</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-md bg-white/5 border border-white/15 group-hover:border-[#00f0ff]/50 group-hover:bg-[#00f0ff]/10 text-gray-300 group-hover:text-[#00f0ff] font-mono-tech text-[10px] font-bold uppercase tracking-wider transition-all flex-shrink-0">
+                            <span class="hidden sm:inline">CONNECT</span>
+                            <span class="group-hover:translate-x-0.5 transition-transform text-xs">→</span>
+                        </div>
+                    </button>
+                    
+                    <!-- GitHub Stream Deck Key -->
+                    <button type="button" onclick="window.signInOAuth('github')" class="group relative w-full p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-white/[0.07] via-white/[0.03] to-transparent hover:from-[#a855f7]/15 hover:via-white/[0.06] hover:to-[#a855f7]/5 border border-white/15 hover:border-[#a855f7]/60 flex items-center justify-between gap-2.5 sm:gap-3 transition-all duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.25)] active:scale-[0.99] cursor-pointer text-left overflow-hidden">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-black/60 border border-white/20 group-hover:border-[#a855f7]/60 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:shadow-[0_0_12px_rgba(168,85,247,0.3)] transition-all">
+                                <svg class="w-5 h-5 flex-shrink-0 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-xs sm:text-sm text-white tracking-wide group-hover:text-[#c084fc] transition-colors whitespace-nowrap">Continue with GitHub</div>
+                                <div class="text-[10px] text-gray-400 font-mono-tech tracking-wider uppercase truncate">Developer &amp; Broadcaster ID</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-md bg-white/5 border border-white/15 group-hover:border-[#a855f7]/50 group-hover:bg-[#a855f7]/10 text-gray-300 group-hover:text-[#c084fc] font-mono-tech text-[10px] font-bold uppercase tracking-wider transition-all flex-shrink-0">
+                            <span class="hidden sm:inline">AUTH</span>
+                            <span class="group-hover:translate-x-0.5 transition-transform text-xs">→</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Terms Checkbox (Styled Cyber Glass Plate) -->
+                <div class="mt-6 pt-5 border-t border-white/10 flex flex-col items-center">
+                    <label id="terms-label" for="terms-checkbox" class="flex items-center gap-3 cursor-pointer group bg-black/40 px-4 py-3 rounded-xl border border-white/10 hover:border-[#00f0ff]/40 transition-all w-full justify-center select-none">
+                        <input type="checkbox" id="terms-checkbox" class="w-4 h-4 rounded bg-black/70 border-2 border-white/30 text-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] focus:ring-offset-0 cursor-pointer accent-[#00f0ff]">
+                        <span class="text-xs text-gray-300 font-mono-tech leading-relaxed select-none">
+                            I accept <button type="button" onclick="openModal('legal-modal-tos');" class="text-white hover:text-[#00f0ff] underline font-bold transition-colors">Terms of Use</button> &amp; <button type="button" onclick="openModal('legal-modal-privacy');" class="text-white hover:text-[#00f0ff] underline font-bold transition-colors">Privacy Policy</button>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Legal Footer (Screenshot 2 Exact Clone & Uniform Equal Size Grid) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full max-w-[460px] mt-6 font-mono-tech text-xs">
+                <button type="button" onclick="openModal('legal-modal-tos')" class="h-11 px-3 rounded-xl bg-black/60 hover:bg-white/[0.08] border border-white/15 hover:border-white/35 text-gray-300 hover:text-white uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2 active:scale-95 text-[11px] truncate">
+                    <span class="w-2 h-2 rounded-full bg-[#00f0ff] shadow-[0_0_8px_#00f0ff] shrink-0"></span>
+                    <span class="truncate">TERMS OF USE</span>
+                </button>
+                <button type="button" onclick="openModal('legal-modal-privacy')" class="h-11 px-3 rounded-xl bg-black/60 hover:bg-white/[0.08] border border-white/15 hover:border-white/35 text-gray-300 hover:text-white uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2 active:scale-95 text-[11px] truncate">
+                    <span class="w-2 h-2 rounded-full bg-[#a800ff] shadow-[0_0_8px_#a800ff] shrink-0"></span>
+                    <span class="truncate">PRIVACY POLICY</span>
+                </button>
+                <button type="button" onclick="openModal('legal-modal-contact')" class="h-11 px-3 rounded-xl bg-black/60 hover:bg-[#00f0ff]/10 border border-white/15 hover:border-[#00f0ff]/50 text-gray-300 hover:text-[#00f0ff] uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2 active:scale-95 text-[11px] truncate">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] shrink-0"></span>
+                    <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span class="truncate">DIRECT CONTACTS</span>
+                </button>
+            </div>
+
+    <!-- TERMS MODAL -->
+    <div id="legal-modal-tos" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-6 sm:p-8 pointer-events-auto border border-white/10">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#00f0ff] shadow-[0_0_8px_#00f0ff]"></span>
+                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">Terms of Service</h3>
+                </div>
+                <button onclick="closeModal('legal-modal-tos')" aria-label="Close Terms" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-xs text-gray-300 font-medium leading-relaxed custom-scrollbar overflow-y-auto pr-3">
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">1. Acceptance of Terms & Eligibility</h4>
+                    <p>By registering for or accessing Whutcha ("the Platform"), you agree to comply with and be bound by these Terms of Service. You must be at least 18 years of age or the age of legal majority in your jurisdiction to operate a broadcaster account.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">2. 0% Platform Fee Model & Direct Settlement</h4>
+                    <p>Whutcha operates as a zero-commission platform for video donations. The Platform charges 0% fees on viewer donations. All payments flow directly between the viewer and the broadcaster via connected payment gateways.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">3. Broadcast Rights, Content Licensing & Public Display</h4>
+                    <p>By submitting a video-donation or requesting a live Co-Stream, the viewer grants the recipient broadcaster a non-exclusive, irrevocable, worldwide, royalty-free license to stream, record, edit, and publicly display the submitted media during live broadcasts and subsequent derivative video on demand (VODs, YouTube clips, TikTok/Instagram Shorts).</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">4. Pre-Moderation & Streamer Controls</h4>
+                    <p>Broadcasters retain sole editorial control over all media sent to their broadcast. Whutcha provides a dedicated pre-moderation queue ("Green Room") allowing broadcasters to preview video donations before sending them to the OBS overlay. Broadcasters acknowledge that live Co-Streams are admitted at their own discretion. Hate speech, illegal conduct, explicit violence, non-consensual content, and copyright infringement are strictly prohibited.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">5. Refund Policy & Anti-Fraud Protection</h4>
+                    <p>Viewers agree that digital video messages and live broadcast calls are fulfilled immediately upon approval and broadcast. Fraudulent disputes or automated payment abuse will result in permanent blocking from the platform.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">6. Acceptable Use</h4>
+                    <p>Users shall not upload malicious files, attempt denial-of-service attacks, forge donation payloads, or impersonate other creators. Violations result in immediate account suspension.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">7. Service Availability & Disclaimers</h4>
+                    <p>Whutcha is provided "as is" and "as available". While we maintain high-availability architecture with low-latency WebRTC routing, we do not warrant uninterrupted broadcast connectivity or third-party streaming platform compliance.</p>
+                </section>
+            </div>
+            <div class="pt-4 mt-3 border-t border-white/10 flex justify-end">
+                <button onclick="closeModal('legal-modal-tos')" class="px-5 py-2 bg-[#00f0ff] text-black font-bold text-xs uppercase rounded-xl hover:bg-[#3bf4ff] transition-all">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRIVACY POLICY MODAL -->
+    <div id="legal-modal-privacy" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-6 sm:p-8 pointer-events-auto border border-white/10">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#a800ff] shadow-[0_0_8px_#a800ff]"></span>
+                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">Privacy Policy</h3>
+                </div>
+                <button onclick="closeModal('legal-modal-privacy')" aria-label="Close Privacy" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-xs text-gray-300 font-medium leading-relaxed custom-scrollbar overflow-y-auto pr-3">
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">1. Data Minimization Principles</h4>
+                    <p>Whutcha adheres to strict privacy-by-design. We collect only the minimum technical metadata necessary to authenticate broadcasters, verify WebRTC signaling channels, and deliver video donations to OBS browser sources.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">2. Information We Collect</h4>
+                    <p>We process: (a) Broadcaster account credentials (email and OAuth identifiers from Twitch, Discord, or Google); (b) Ephemeral video blobs uploaded by fans for live donation playback; (c) Connection telemetry (browser agent, WebRTC candidate latency) to diagnose streaming issues.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">3. Ephemeral Video Storage & Deletion</h4>
+                    <p>Fan-uploaded video messages are stored temporarily in secured cloud buckets with private signed URLs. Rejected donations are permanently deleted. Played video donations are preserved only if explicitly enabled by the creator for highlight clip export.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">4. Data Privacy & Account Deletion</h4>
+                    <p>You have the right to access, update, or request complete deletion of your broadcaster profile and associated media at any time directly inside your Settings menu.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">5. Cookies & Local Storage</h4>
+                    <p>We do not use tracking or advertising cookies. Local storage is utilized solely to maintain broadcaster session tokens, store OBS overlay keys, and save user layout preferences.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">6. Security & Encryption</h4>
+                    <p>All communication is secured via TLS 1.3 encryption. WebRTC media streams are encrypted point-to-point via SRTP/DTLS. Database access is strictly guarded with Row-Level Security (RLS) policies preventing unauthorized data access.</p>
+                </section>
+            </div>
+            <div class="pt-4 mt-3 border-t border-white/10 flex justify-end">
+                <button onclick="closeModal('legal-modal-privacy')" class="px-5 py-2 bg-[#a800ff] text-white font-bold text-xs uppercase rounded-xl hover:bg-[#c026d3] transition-all">Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT MODAL -->
+    <div id="legal-modal-contact" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-md rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-7 text-center pointer-events-auto">
+            <div class="w-14 h-14 rounded-xl bg-[#00f0ff]/15 flex items-center justify-center mx-auto mb-4 border border-[#00f0ff]/40 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                <svg class="w-7 h-7 text-[#00f0ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-xl font-black mb-2 text-white uppercase tracking-wider">Get in Touch</h3>
+            <p class="text-xs text-gray-400 mb-4 leading-relaxed font-mono-tech">Direct support &amp; creator partnerships:</p>
+            <div class="space-y-2.5 w-full mb-5 font-mono-tech text-xs">
+                <a href="mailto:yourdealoff@gmail.com" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between transition-all">
+                    <span class="text-gray-400 uppercase text-[11px] font-bold">Email</span>
+                    <span class="text-[#00f0ff] font-bold">yourdealoff@gmail.com</span>
+                </a>
+            </div>
+            <button onclick="closeModal('legal-modal-contact')" aria-label="Close Contacts" class="w-full py-3 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-colors uppercase text-xs font-mono-tech">Close</button>
+        </div>
+    </div>
+
+    <!-- Modal Scripts -->
+    <script>
+        window.openModal = function(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+                el.classList.remove('pointer-events-none');
+                setTimeout(() => {
+                    el.classList.remove('opacity-0');
+                    el.classList.add('opacity-100');
+                }, 10);
+            }
+        };
+        window.closeModal = function(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.classList.remove('opacity-100');
+                el.classList.add('opacity-0');
+                el.classList.add('pointer-events-none');
+                setTimeout(() => {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }, 300);
+            }
+        };
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const activeModals = document.querySelectorAll('.fixed.inset-0:not(.hidden)');
+                activeModals.forEach(modal => {
+                    if (modal.id && typeof closeModal === 'function') {
+                        closeModal(modal.id);
+                    }
+                });
+            }
+        });
+        function handleHashModal() {
+            const h = window.location.hash.toLowerCase();
+            const urlParams = new URLSearchParams(window.location.search);
+            const isReg = h === '#register' || urlParams.get('mode') === 'register' || urlParams.get('register') === 'true';
+            if (isReg) {
+                const title = document.getElementById('auth-title-text');
+                if (title) title.innerText = 'Streamer Registration';
+                const regBtn = document.getElementById('btn-email-signup');
+                if (regBtn) {
+                    regBtn.classList.remove('bg-white/5', 'text-white');
+                    regBtn.classList.add('bg-gradient-to-r', 'from-[#00f0ff]', 'to-[#a800ff]', 'text-black', 'shadow-[0_0_25px_rgba(0,240,255,0.4)]');
+                }
+                const emailInp = document.getElementById('auth-email');
+                if (emailInp) emailInp.focus();
+            } else if (h === '#terms') {
+                window.openModal('legal-modal-tos');
+            } else if (h === '#privacy') {
+                window.openModal('legal-modal-privacy');
+            } else if (h === '#contact') {
+                window.openModal('legal-modal-contact');
+            }
+        }
+        handleHashModal();
+        window.addEventListener('DOMContentLoaded', handleHashModal);
+        window.addEventListener('hashchange', handleHashModal);
+    </script>
+    <script type="module" src="./app.js?v=51"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Whutcha Supabase Configuration
+
+[functions.livekit-token]
+enabled = true
+verify_jwt = true
+
+[functions.push-alert]
+enabled = true
+verify_jwt = false
+
+[functions.telegram-alert]
+enabled = true
+verify_jwt = false
+
+[functions.discord-alert]
+enabled = true
+verify_jwt = false
+
+[functions.og-unfurl]
+enabled = true
+verify_jwt = false

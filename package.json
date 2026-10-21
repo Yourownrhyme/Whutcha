@@ -1,0 +1,13 @@
+{
+  "name": "whutcha",
+  "version": "2.6.0",
+  "description": "Whutcha - Next-Gen Video Donations & Live Co-Streams Protocol",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve whutcha-web -l 3000",
+    "dev:3000": "npx serve whutcha-web -l 3000",
+    "dev:3002": "npx serve whutcha-web -l 3002",
+    "start": "npx serve whutcha-web -l 3000",
+    "serve": "npx serve whutcha-web -l 3000"
+  }
+}

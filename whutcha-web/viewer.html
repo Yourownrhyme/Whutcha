@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Send Reaction - Whutcha</title>
+    <meta name="description" content="Whutcha is the elite 2026 platform for Video-Donations and Instant Co-Streams.">
+    
+    <!-- SEAGULL MODE: OpenGraph / Twitter Cards (1200x630 Large Card Standard) -->
+    <meta property="og:title" content="Send a Video Message or Co-Stream | Whutcha">
+    <meta property="og:description" content="Send a pre-moderated video message directly to OBS or request an instant live Co-Stream broadcast on Whutcha.">
+    <meta property="og:image" content="https://whutcha.com/og-banner.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Whutcha">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Send a Video Message or Co-Stream | Whutcha">
+    <meta name="twitter:description" content="Send a pre-moderated video message directly to OBS or request an instant live Co-Stream broadcast on Whutcha.">
+    <meta name="twitter:image" content="https://whutcha.com/og-banner.jpg">
+    
+    <meta name="theme-color" content="#060709">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Whutcha">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css?v=51">
+    <link rel="stylesheet" href="cyber-theme.css?v=51">
+    
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+    
+    <style>
+        body { 
+            background-color: var(--cyber-bg); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .text-glow-cyan {
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+        }
+        .cam-reticle-tl { top: 12px; left: 12px; border-top: 2px solid rgba(0,240,255,0.7); border-left: 2px solid rgba(0,240,255,0.7); }
+        .cam-reticle-tr { top: 12px; right: 12px; border-top: 2px solid rgba(0,240,255,0.7); border-right: 2px solid rgba(0,240,255,0.7); }
+        .cam-reticle-bl { bottom: 12px; left: 12px; border-bottom: 2px solid rgba(0,240,255,0.7); border-left: 2px solid rgba(0,240,255,0.7); }
+        .cam-reticle-br { bottom: 12px; right: 12px; border-bottom: 2px solid rgba(0,240,255,0.7); border-right: 2px solid rgba(0,240,255,0.7); }
+    </style>
+</head>
+<body class="bg-[#060709] text-white min-h-screen selection:bg-[#00f0ff]/30 flex flex-col relative overflow-x-hidden pt-[max(1.5rem,env(safe-area-inset-top,1.5rem))] px-4 pb-[max(3rem,env(safe-area-inset-bottom,3rem))]">
+    
+    <!-- Ambient Tech Glows -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(#151926_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
+        <div class="absolute top-[-100px] left-1/4 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(0,240,255,0.12)_0%,transparent_60%)] filter blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-[-100px] right-1/4 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(168,0,255,0.08)_0%,transparent_60%)] filter blur-3xl pointer-events-none"></div>
+    </div>
+    
+    <!-- Co-Stream Waiting Room Modal -->
+    <div id="costream-viewer-modal" class="hidden fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex-col items-center justify-center p-4">
+        <div class="cyber-rack w-full max-w-md max-h-[92vh] overflow-y-auto p-6 rounded-2xl flex flex-col items-center gap-4 border border-[#a800ff]/40 relative shadow-[0_0_60px_rgba(0,0,0,0.9)] custom-scrollbar">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-[#a800ff] pulse-on-air"></span>
+                <h3 id="costream-status-text" class="text-base font-black text-white uppercase text-center font-mono-tech tracking-wider">Waiting for Streamer to Approve...</h3>
+            </div>
+            <div class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-[#a800ff]/10 border border-[#a800ff]/30 font-mono-tech text-[11px]">
+                <span class="text-gray-300 uppercase tracking-wider font-bold">⏱️ Call Duration</span>
+                <span id="viewer-costream-sla" class="text-[#d480ff] font-black tracking-widest">00:60s</span>
+            </div>
+            <p id="costream-payment-hint" class="text-gray-400 text-xs text-center px-4 leading-relaxed font-mono-tech">A payment tab opened. Complete the payment there so the broadcaster can verify and accept your call!</p>
+            
+            <div id="costream-video-container" class="w-full aspect-[9/16] max-h-[min(46vh,340px)] mx-auto bg-black rounded-xl border border-white/10 overflow-hidden relative shadow-[0_0_30px_rgba(0,240,255,0.2)] cyber-scanlines">
+                <div id="local-costream-video" class="w-full h-full flex items-center justify-center bg-[#0a0c12]">
+                    <span class="text-gray-500 text-xs font-mono-tech uppercase tracking-widest text-center px-4">Camera activates on connect</span>
+                </div>
+                <span class="absolute top-3 left-3 bg-[#00f0ff] text-black font-black px-2 py-0.5 text-[9px] rounded font-mono-tech uppercase z-10 shadow">You (LIVE)</span>
+            </div>
+
+            <button id="cancel-costream-btn" class="w-full py-3 bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 text-red-400 rounded-xl font-black uppercase text-xs tracking-wider transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)] font-mono-tech">Cancel / Disconnect</button>
+        </div>
+    </div>
+
+    <!-- VIDEO DONATION REALTIME STATUS TRACKER & REACTION MODAL -->
+    <div id="video-status-modal" class="hidden fixed inset-0 z-[220] bg-black/95 backdrop-blur-xl flex-col items-center justify-center p-4">
+        <div class="cyber-rack w-full max-w-md max-h-[92vh] overflow-y-auto p-6 rounded-2xl flex flex-col items-center gap-4 border border-[#00f0ff]/40 relative shadow-[0_0_60px_rgba(0,0,0,0.9)] text-center custom-scrollbar">
+            <!-- Status Indicator Header + Close Button -->
+            <div class="w-full flex items-center justify-between pb-2.5 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <span id="tracker-dot" class="w-3 h-3 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_#f59e0b]"></span>
+                    <h3 id="tracker-title" class="text-xs sm:text-sm font-black text-white uppercase font-mono-tech tracking-wider">Video in Moderation Queue...</h3>
+                </div>
+                <button onclick="closeVideoStatusModal()" aria-label="Close Video Status Tracker" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition-colors cursor-pointer shrink-0">✕</button>
+            </div>
+
+            <!-- Cyber Receipt HUD -->
+            <div class="w-full flex items-center justify-between p-2.5 rounded-xl bg-black/60 border border-white/10 font-mono-tech text-[11px]">
+                <div class="flex items-center gap-2 text-left">
+                    <span class="text-xs">🧾</span>
+                    <div>
+                        <span class="text-[9px] text-gray-500 uppercase block leading-none">Whutcha Receipt</span>
+                        <span id="tracker-receipt-id" class="font-bold text-[#00f0ff] uppercase tracking-wider text-xs">#PENDING</span>
+                    </div>
+                </div>
+                <button id="btn-copy-receipt" onclick="copyReceiptLink(this)" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30 text-[10px] font-bold uppercase transition-all flex items-center gap-1 active:scale-95 cursor-pointer shadow-sm">
+                    <span>📋</span>
+                    <span id="copy-receipt-label">Copy Link</span>
+                </button>
+            </div>
+
+            <!-- 3-Stage Progress Timeline -->
+            <div class="w-full grid grid-cols-3 gap-1.5 py-1 text-center font-mono-tech">
+                <div id="step-queue" class="p-2 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-400 text-[10px] font-bold uppercase transition-all">
+                    <span>1. In Queue</span>
+                </div>
+                <div id="step-live" class="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 text-[10px] font-bold uppercase transition-all">
+                    <span>2. Live in OBS</span>
+                </div>
+                <div id="step-reaction" class="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 text-[10px] font-bold uppercase transition-all">
+                    <span>3. TikTok Reel</span>
+                </div>
+            </div>
+
+            <!-- Subtext -->
+            <p id="tracker-subtext" class="text-xs text-gray-300 font-mono-tech leading-relaxed px-2">
+                Your video message was submitted to <span id="tracker-streamer-name" class="text-[#00f0ff] font-bold">@Broadcaster</span>! Save your receipt link above — when they react, your personalized vertical Shorts/TikTok video will appear here.
+            </p>
+
+            <!-- Video Player Area (Activates when reaction_url is received) -->
+            <div id="reaction-player-container" class="hidden w-full aspect-[9/16] max-h-[380px] bg-black rounded-xl border border-[#a800ff]/50 overflow-hidden relative shadow-[0_0_30px_rgba(168,0,255,0.35)]">
+                <video id="reaction-video-element" controls playsinline class="w-full h-full object-cover"></video>
+            </div>
+
+            <!-- Action Buttons Area -->
+            <div class="w-full space-y-2 pt-1 font-mono-tech">
+                <button id="btn-download-reaction" onclick="downloadReactionReel()" class="hidden w-full py-3 bg-gradient-to-r from-[#a800ff] to-[#d480ff] hover:opacity-90 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_0_20px_rgba(168,0,255,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>⚡ Download TikTok / Shorts Reel (9:16)</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btn-share-reaction" onclick="shareReactionTwitter()" class="hidden flex-1 py-2.5 bg-black hover:bg-white/10 text-white border border-white/20 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <span>Share on X</span>
+                    </button>
+                    <button id="btn-share-telegram" onclick="shareReactionTelegram()" class="hidden flex-1 py-2.5 bg-[#229ED9]/15 hover:bg-[#229ED9]/25 text-[#229ED9] border border-[#229ED9]/30 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span>✈️</span>
+                        <span>Telegram</span>
+                    </button>
+                </div>
+                <button onclick="closeVideoStatusModal()" class="w-full py-2 bg-white/10 hover:bg-white/20 text-gray-300 font-bold text-xs uppercase rounded-xl border border-white/15 transition-all cursor-pointer">Keep Playing in Background</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLAIM MODAL -->
+    <div id="claim-modal" class="fixed inset-0 z-[150] bg-black/90 hidden flex-col items-center justify-center p-6 backdrop-blur-md">
+        <div class="cyber-rack w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded-2xl flex flex-col gap-4 relative shadow-[0_0_60px_rgba(0,0,0,0.9)] border border-[#00f0ff]/40 custom-scrollbar">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-[#00f0ff] rounded-full animate-pulse shadow-[0_0_10px_#00f0ff]"></div>
+                    <h3 class="text-sm font-black uppercase text-white tracking-wider font-mono-tech">Claim Channel Ownership</h3>
+                </div>
+                <button onclick="closeClaimModal()" aria-label="Close Claim Modal" class="text-gray-400 hover:text-white font-mono-tech text-xs">✕</button>
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed font-mono-tech">
+                Are you the real broadcaster of this channel? Claim your profile to access your OBS overlay link, moderate incoming video donations, and withdraw fan funds.
+            </p>
+            <div class="space-y-3">
+                <button id="btn-claim-oauth" onclick="claimWithAuth()" class="w-full py-3 bg-[#00f0ff] hover:bg-[#3bf4ff] text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+                    <span>⚡ Claim with Account / OAuth</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="claim-token-input" aria-label="Invite Claim Token" placeholder="Invite Claim Token (e.g. tok_...)" class="flex-1 bg-black/60 border border-white/10 focus:border-[#00f0ff] rounded-xl px-3 py-2.5 text-white text-xs font-mono-tech outline-none">
+                    <button id="btn-claim-token" onclick="claimWithAuth()" class="py-2.5 px-4 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase rounded-xl border border-white/15 transition-all">Submit</button>
+                </div>
+            </div>
+            <div class="text-[10px] text-gray-500 font-mono-tech text-center mt-1">
+                Verified channel ownership required. You can manage or remove your profile at any time.
+            </div>
+        </div>
+    </div>
+
+    <!-- ESCROW BOUNTY VIRAL SHARE MODAL -->
+    <div id="bounty-success-modal" class="hidden fixed inset-0 z-[250] bg-black/95 backdrop-blur-xl flex-col items-center justify-center p-4">
+        <div class="cyber-rack w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded-2xl flex flex-col items-center gap-4 border border-[#00f0ff]/40 relative shadow-[0_0_60px_rgba(0,0,0,0.9)] text-center custom-scrollbar">
+            <button onclick="closeBountyModal()" aria-label="Close Bounty Modal" class="absolute top-4 right-4 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition-colors">✕</button>
+            
+            <!-- Mascot badge with Loco Kwokka -->
+            <div class="relative">
+                <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shadow-[0_0_25px_rgba(0,240,255,0.5)] mx-auto">
+                    <img src="./assets/loco-kwokka.jpg" alt="Loco Kwokka" width="64" height="64" fetchpriority="low" loading="lazy" decoding="async" class="w-full h-full object-cover object-[50%_38%]">
+                </div>
+                <span class="absolute -bottom-1 -right-2 px-2 py-0.5 rounded-full bg-amber-400 text-black font-black text-[9px] uppercase tracking-wider font-mono-tech shadow-md">BOUNTY</span>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-black text-white uppercase tracking-wider flex items-center justify-center gap-1.5">
+                    <span>🔥 Video Bounty Locked!</span>
+                </h3>
+                <p class="text-xs text-gray-300 font-mono-tech mt-1 leading-relaxed" id="bounty-subtext">
+                    Your donation is safely held in escrow. Copy the message below to summon the creator on stream!
+                </p>
+            </div>
+
+            <!-- Pitch box -->
+            <div class="w-full text-left space-y-1.5">
+                <label for="bounty-pitch-text" class="block text-[10px] font-mono-tech text-gray-400 uppercase tracking-wider">Stream Chat Pitch (Twitch / Kick / YouTube)</label>
+                <div class="relative">
+                    <textarea id="bounty-pitch-text" readonly rows="3" class="w-full bg-black/80 border border-white/15 focus:border-[#00f0ff] rounded-xl p-3 text-xs font-mono-tech text-[#00f0ff] focus:outline-none resize-none selection:bg-[#00f0ff]/30 leading-relaxed"></textarea>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="w-full space-y-2 pt-1 font-mono-tech">
+                <button id="btn-copy-pitch" onclick="copyBountyPitch()" class="w-full py-3 bg-[#00f0ff] hover:bg-[#3bf4ff] text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                    <span>⚡ Copy for Stream Chat</span>
+                </button>
+                <button onclick="shareBountyTwitter()" class="w-full py-2.5 bg-black hover:bg-white/10 text-white border border-white/20 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <span>Share on X (Twitter)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN VIEWER CARD -->
+    <div class="max-w-md mx-auto w-full relative z-10" id="main-ui">
+
+        <!-- Top Navigation Bar (Undo / Back) -->
+        <div class="flex items-center justify-between mb-4" id="viewer-top-nav">
+            <a id="nav-leaderboard-btn" href="./leaderboard.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#00f0ff]/50 text-gray-300 hover:text-white transition-all text-xs font-mono-tech uppercase tracking-wider shadow-sm group">
+                <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#00f0ff] group-hover:-translate-x-0.5 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Leaderboard</span>
+            </a>
+            <a id="nav-streamer-portal" href="./index.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#a800ff]/50 text-gray-400 hover:text-white transition-all text-xs font-mono-tech uppercase tracking-wider shadow-sm group">
+                <span id="nav-streamer-label">Streamer Sign In</span>
+                <svg id="nav-streamer-icon" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#a800ff] group-hover:translate-x-0.5 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Streamer Header Card (Screenshot 4 Polish) -->
+        <div class="flex flex-col gap-2.5 mb-5 cyber-rack cyber-border-dual p-4 sm:p-5 rounded-2xl shadow-xl relative overflow-hidden">
+            <div class="flex items-center gap-4">
+                <div class="w-13 h-13 sm:w-14 sm:h-14 bg-[#0d1017] rounded-xl flex items-center justify-center font-black text-lg border border-[#00f0ff]/40 text-[#00f0ff] shadow-[0_0_15px_rgba(0,240,255,0.3)] shrink-0 overflow-hidden" id="streamer-avatar-container">
+                    <span id="streamer-avatar">?</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2 mb-0.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+                            <span class="text-[9px] font-mono-tech text-[#00f0ff] uppercase tracking-widest font-bold">SENDING TO CREATOR</span>
+                        </div>
+                        <span class="hidden text-[9px] font-mono-tech text-gray-300 bg-white/10 px-2 py-0.5 rounded border border-white/15" id="creator-platform-badge">Twitch</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black text-white truncate tracking-tight" id="streamer-name">Loading...</h1>
+                </div>
+            </div>
+            <p class="hidden text-[11px] text-gray-300 font-sans leading-relaxed pt-1.5 border-t border-white/10" id="creator-bio-text"></p>
+            
+            <!-- Creator Self-Preview Banner -->
+            <div id="creator-preview-badge" class="hidden mt-1 p-2.5 rounded-xl bg-gradient-to-r from-[#00f0ff]/15 via-black/60 to-[#a800ff]/10 border border-[#00f0ff]/40 text-[#00f0ff] font-mono-tech text-[10px] sm:text-[11px] flex items-center gap-2.5 shadow-inner">
+                <span class="text-base flex-shrink-0">⚡</span>
+                <span class="leading-relaxed"><strong>Preview Mode:</strong> You are viewing your own creator donation page as a fan. Donations submitted here will land in your Cockpit Queue!</span>
+            </div>
+
+            <!-- Live Escrow Pool Notice -->
+            <div id="escrow-pool-notice" class="hidden p-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono-tech flex items-center gap-2"></div>
+        </div>
+
+        <!-- Mode Switcher Tabs -->
+        <div class="flex gap-2 mb-5 p-1 bg-black/60 rounded-xl border border-white/10">
+            <button id="tab-video" class="flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg bg-[#00f0ff] text-black shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>Video Message</span>
+            </button>
+            <button id="tab-costream" class="flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg text-gray-400 hover:text-white transition-all flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>Live Co-Stream</span>
+            </button>
+        </div>
+
+        <!-- Video Recording Section -->
+        <div id="video-section" class="space-y-4">
+            <div class="relative group/cam bg-[#08090d] rounded-2xl overflow-hidden aspect-[9/16] max-h-[min(56vh,480px)] mx-auto border border-white/10 shadow-2xl group cyber-scanlines">
+                
+                <!-- Viewfinder Corner Reticles -->
+                <div class="absolute w-4 h-4 pointer-events-none z-20 cam-reticle-tl"></div>
+                <div class="absolute w-4 h-4 pointer-events-none z-20 cam-reticle-tr"></div>
+                <div class="absolute w-4 h-4 pointer-events-none z-20 cam-reticle-bl"></div>
+                <div class="absolute w-4 h-4 pointer-events-none z-20 cam-reticle-br"></div>
+                
+                <div class="absolute left-1/2 -translate-x-1/2 top-4 opacity-0 group-hover/cam:opacity-100 transition-opacity duration-300 pointer-events-none w-56 p-2 bg-black/90 border border-white/10 text-white text-[10px] font-mono-tech text-center rounded-lg shadow-2xl z-50 backdrop-blur-md">
+                    Look directly at camera. Plays live on stream!
+                </div>
+
+                <video id="camera-preview" class="w-full h-full object-cover scale-x-[-1]" autoplay playsinline muted></video>
+                <video id="playback-video" class="w-full h-full object-cover hidden scale-x-[-1]" playsinline controls></video>
+
+                <!-- Recording Overlay HUD -->
+                <div id="recording-ui" class="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none z-30">
+                    <div id="timer-display" class="absolute top-5 right-5 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-white font-mono-tech font-bold text-xs hidden border border-white/10">00:00</div>
+                    
+                    <div id="record-hint" class="absolute bottom-24 left-1/2 -translate-x-1/2 bg-black/90 px-4 py-2 rounded-full text-[#00f0ff] font-mono-tech font-bold text-xs uppercase tracking-widest border border-[#00f0ff]/30 shadow-[0_0_15px_rgba(0,240,255,0.3)] animate-pulse pointer-events-none whitespace-nowrap">
+                        Tap To Record Video
+                    </div>
+                    
+                    <div class="flex justify-center items-center gap-4 w-full pointer-events-auto" id="record-btn-container">
+                        <!-- Direct File Upload Fallback (Device/Gallery) -->
+                        <label for="video-file-input" class="w-12 h-12 rounded-2xl bg-black/60 border border-white/20 hover:border-[#00f0ff]/60 flex items-center justify-center text-gray-300 hover:text-[#00f0ff] cursor-pointer transition-all shadow-[0_0_20px_rgba(0,0,0,0.8)] active:scale-95 group/upload" title="Upload video file (MP4, WebM)">
+                            <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime" class="hidden">
+                            <svg class="w-5 h-5 group-hover/upload:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        </label>
+
+                        <button id="record-btn" class="w-16 h-16 rounded-full border-4 border-white/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,0,0,0.8)] bg-black/40" title="Record with Camera">
+                            <div class="w-12 h-12 bg-[#00f0ff] rounded-full shadow-[0_0_20px_rgba(0,240,255,0.6)]"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Retake Action -->
+                <div id="retake-ui" class="absolute top-5 left-5 hidden pointer-events-auto z-30">
+                    <button id="retake-btn" class="bg-black/70 backdrop-blur-md px-4 py-1.5 rounded-full text-white font-mono-tech font-bold text-xs border border-white/10 hover:border-[#00f0ff] transition-all">↺ Retake</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Co-Stream Section -->
+        <div id="costream-section" class="hidden text-center py-10 cyber-rack rounded-2xl border border-white/10 mb-6 p-6">
+            <div class="w-14 h-14 bg-[#a800ff]/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[#a800ff]/40 shadow-[0_0_25px_rgba(168,0,255,0.3)]">
+                <svg class="w-7 h-7 text-[#a800ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-lg font-black text-white mb-2 uppercase tracking-wide">Live Co-Stream Access</h3>
+            <p class="text-gray-400 font-mono-tech text-xs px-2 leading-relaxed">You will jump into the broadcast live via WebRTC. Camera and mic activate automatically once approved.</p>
+        </div>
+
+        <!-- Payment & Name Form -->
+        <div class="mt-5 space-y-4 cyber-rack p-5 rounded-2xl border border-white/10">
+            <div>
+                <label for="nickname" class="block text-[10px] font-mono-tech text-gray-400 uppercase tracking-widest mb-1.5">Your Fan Handle</label>
+                <input type="text" id="nickname" placeholder="Anonymous" maxlength="25" dir="auto" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono-tech text-xs placeholder-gray-600 focus:outline-none focus:border-[#00f0ff]">
+            </div>
+            
+            <div>
+                <div class="flex justify-between items-center mb-1.5">
+                    <label for="amount-input" class="text-[10px] font-mono-tech text-gray-400 uppercase tracking-widest">Donation Amount</label>
+                    <span id="min-price-label" class="text-[10px] font-mono-tech text-[#00f0ff] font-bold">Min: $5</span>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-2 mb-2.5 price-preset-grid" id="price-presets">
+                    <!-- Presets injected via JS -->
+                </div>
+                
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-mono-tech font-bold text-sm">$</span>
+                    <input type="number" id="amount-input" aria-label="Donation Amount in USD" step="1" value="5" class="w-full bg-black/60 border border-white/10 rounded-xl pl-8 pr-4 py-2.5 text-white font-mono-tech font-black text-base focus:outline-none focus:border-[#00f0ff]">
+                </div>
+
+                <!-- VIP Alert ($50+) Dynamic Reward Banner -->
+                <div id="whale-vip-dopamine-banner" class="hidden mt-2.5 p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/50 text-amber-300 font-mono-tech text-[11px] flex items-center justify-between gap-2 shadow-[0_0_20px_rgba(250,204,21,0.25)] animate-pulse">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm">👑</span>
+                        <span class="font-bold uppercase tracking-wider">VIP Alert Unlocked: Gold Frame &amp; Priority Stream Sound!</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded bg-amber-400 text-black font-black text-[9px] uppercase shrink-0">VIP</span>
+                </div>
+            </div>
+
+            <!-- P2P Payment Memo / Ref ID (Optional) -->
+            <div>
+                <div class="flex justify-between items-center mb-1.5">
+                    <label for="payment-memo" class="block text-[10px] font-mono-tech text-gray-400 uppercase tracking-widest">
+                        Payment Note / Memo <span class="text-gray-500 font-normal">(Optional)</span>
+                    </label>
+                    <span class="text-[9px] font-mono-tech text-amber-400/90 font-bold">Fast Streamer Verification</span>
+                </div>
+                <input type="text" id="payment-memo" placeholder="e.g. PayPal name, Boosty nickname, or Ref ID" maxlength="60" dir="auto" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono-tech text-xs placeholder-gray-600 focus:outline-none focus:border-amber-400/70">
+            </div>
+
+            <!-- Direct 0% P2P Settlement Transparency Card -->
+            <div class="p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-950/20 to-black border border-amber-500/30 text-amber-200/90 font-mono-tech text-[11px] leading-relaxed flex items-start gap-2.5">
+                <span class="text-sm shrink-0">⚡</span>
+                <div>
+                    <strong class="text-white block uppercase tracking-wider text-[10px] mb-0.5">100% Direct P2P Transfer (0% Platform Fee)</strong>
+                    <span>Your pledge goes directly to the broadcaster. Whutcha never touches your money. Broadcasters verify receipt on their account before playing your message on stream.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banned Device Banner (Proactive Anti-Troll Shield) -->
+        <div id="viewer-banned-banner" class="hidden mt-4 p-3.5 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 font-mono-tech text-xs flex items-center gap-3 shadow-[0_0_25px_rgba(239,68,68,0.3)] animate-pulse">
+            <span class="text-xl">🚫</span>
+            <div>
+                <p class="font-bold uppercase tracking-wider text-red-200">Device Restricted By Broadcaster</p>
+                <p class="text-[11px] text-red-300/80 leading-tight mt-0.5">This device ID has been blacklisted by the broadcaster. Video submissions and co-stream requests are blocked.</p>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="submit-btn" class="w-full mt-6 py-4 bg-[#00f0ff] hover:bg-[#38f4ff] text-black font-black text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_0_30px_rgba(0,240,255,0.4)] disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden group">
+            <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
+            <div id="upload-progress-bar" class="absolute inset-0 bg-white w-0 transition-all duration-300 z-0 opacity-20"></div>
+            <span id="submit-btn-text" class="relative z-10 font-mono-tech">SEND FOR $5.00</span>
+        </button>
+
+        <!-- Subtle Creator Ownership Footer (Only visible for unclaimed public directory channels) -->
+        <div id="public-directory-banner" class="hidden mt-5 pt-3 border-t border-white/10 flex items-center justify-between gap-2 text-[10px] font-mono-tech text-gray-500">
+            <span>Are you this creator?</span>
+            <div class="flex items-center gap-3">
+                <button onclick="openClaimModal()" class="text-[#00f0ff] hover:underline font-bold uppercase cursor-pointer">Claim Channel</button>
+                <button onclick="delistChannel()" class="text-gray-500 hover:text-red-400 transition-colors cursor-pointer">Remove</button>
+            </div>
+        </div>
+
+        <!-- Terms Footer (Frosted Titanium Buttons) -->
+        <div class="mt-6 flex flex-wrap justify-center gap-3 pb-2 font-mono-tech text-xs">
+            <button onclick="openModal('legal-modal-tos')" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/15 hover:border-white/40 text-gray-300 hover:text-white uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#00f0ff] shadow-[0_0_6px_#00f0ff]"></span>
+                <span>Terms of Use</span>
+            </button>
+            <button onclick="openModal('legal-modal-privacy')" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/15 hover:border-white/40 text-gray-300 hover:text-white uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#a800ff] shadow-[0_0_6px_#a800ff]"></span>
+                <span>Privacy Policy</span>
+            </button>
+            <button onclick="openModal('legal-modal-contact')" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/15 hover:border-white/40 text-gray-300 hover:text-white uppercase tracking-wider font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+                <span>Contacts</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Active Co-Stream Fullscreen UI -->
+    <div id="active-costream-ui" class="hidden fixed inset-0 z-50 bg-black flex-col">
+        <div class="flex-1 relative">
+            <div id="remote-video" class="absolute inset-0 bg-[#0d1017]"></div>
+            <div id="local-video" class="absolute bottom-6 right-6 w-24 h-36 sm:w-32 sm:h-48 bg-black rounded-xl overflow-hidden border border-[#00f0ff]/50 shadow-2xl"></div>
+        </div>
+        <div class="min-h-20 bg-[#0b0d13] border-t border-white/10 flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom,1rem))]">
+            <button id="btn-disconnect" class="py-3 px-8 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-colors font-mono-tech">DISCONNECT CALL</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="legal-modal-tos" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-6 sm:p-8 pointer-events-auto border border-white/10">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#00f0ff] shadow-[0_0_8px_#00f0ff]"></span>
+                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider font-mono-tech">Terms of Service</h3>
+                </div>
+                <button onclick="closeModal('legal-modal-tos')" aria-label="Close Terms" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-xs text-gray-300 font-medium leading-relaxed custom-scrollbar overflow-y-auto pr-3">
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">1. Acceptance of Terms & Eligibility</h4>
+                    <p>By accessing Whutcha ("the Platform"), you agree to comply with and be bound by these Terms of Service. You must be at least 18 years of age or the age of legal majority in your jurisdiction to submit video donations.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">2. 0% Platform Fee Model & Direct Settlement</h4>
+                    <p>Whutcha operates strictly as a zero-commission technology platform for video donations. The Platform charges 0% fees on viewer donations. All payments flow directly between the viewer and the broadcaster via connected payment gateways.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">3. Broadcast Rights & Reaction Content</h4>
+                    <p>By submitting a video-donation or requesting a live Co-Stream, the viewer grants the recipient broadcaster a non-exclusive, worldwide, royalty-free license to stream, record, edit, and publicly display the media during live broadcasts and derivative shorts/clips.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#00f0ff]">4. Stream-Safe Content Moderation</h4>
+                    <p>Hate speech, illegal conduct, explicit violence, nudity, non-consensual content, and copyright infringement are strictly prohibited and result in permanent hardware bans.</p>
+                </section>
+            </div>
+            <div class="pt-4 mt-3 border-t border-white/10 flex justify-end">
+                <button onclick="closeModal('legal-modal-tos')" class="px-5 py-2.5 bg-[#00f0ff] hover:bg-[#3bf4ff] text-black font-black text-xs uppercase rounded-xl transition-all font-mono-tech shadow-[0_0_15px_rgba(0,240,255,0.3)] cursor-pointer">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="legal-modal-privacy" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-6 sm:p-8 pointer-events-auto border border-white/10">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#a800ff] shadow-[0_0_8px_#a800ff]"></span>
+                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider font-mono-tech">Privacy Policy</h3>
+                </div>
+                <button onclick="closeModal('legal-modal-privacy')" aria-label="Close Privacy" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-xs text-gray-300 font-medium leading-relaxed custom-scrollbar overflow-y-auto pr-3">
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">1. Data Minimization & Privacy</h4>
+                    <p>We do not store credit card or payment information. We collect only the minimum technical metadata necessary to process video donations and WebRTC signaling.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">2. Ephemeral Video Storage</h4>
+                    <p>Rejected video blobs are instantly and permanently purged. Approved videos are securely archived for creator highlight generation and viewer receipt download.</p>
+                </section>
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-1 text-[#a800ff]">3. End-to-End Security</h4>
+                    <p>All communication is TLS 1.3 encrypted. Live WebRTC sessions are encrypted peer-to-peer with SRTP/DTLS protocols.</p>
+                </section>
+            </div>
+            <div class="pt-4 mt-3 border-t border-white/10 flex justify-end">
+                <button onclick="closeModal('legal-modal-privacy')" class="px-5 py-2.5 bg-[#a800ff] hover:bg-[#c026d3] text-white font-black text-xs uppercase rounded-xl transition-all font-mono-tech shadow-[0_0_15px_rgba(168,0,255,0.3)] cursor-pointer">Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="legal-modal-contact" onclick="if(event.target === this) closeModal(this.id)" class="fixed inset-0 z-50 bg-black/90 hidden flex-col items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="cyber-rack w-full max-w-md rounded-2xl flex flex-col relative overflow-hidden shadow-2xl p-6 sm:p-8 text-center pointer-events-auto border border-white/10">
+            <button onclick="closeModal('legal-modal-contact')" aria-label="Close Contacts" class="absolute top-4 right-4 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="w-14 h-14 rounded-2xl bg-[#00f0ff]/15 flex items-center justify-center mx-auto mb-4 border border-[#00f0ff]/40 shadow-[0_0_20px_rgba(0,240,255,0.3)] text-[#00f0ff]">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-xl font-black mb-1.5 text-white uppercase tracking-wider font-mono-tech">Direct Support</h3>
+            <p class="text-xs text-gray-400 mb-5 leading-relaxed font-mono-tech">Need help with a donation, creator onboarding, or channel verification? Reach us directly:</p>
+            <div class="space-y-3 w-full mb-6 font-mono-tech text-xs">
+                <a href="mailto:yourdealoff@gmail.com" class="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#00f0ff]/40 flex items-center justify-between transition-all group">
+                    <span class="text-gray-400 group-hover:text-gray-300 uppercase text-[11px] font-bold">Email</span>
+                    <span class="text-[#00f0ff] font-bold group-hover:underline">yourdealoff@gmail.com</span>
+                </a>
+            </div>
+            <button onclick="closeModal('legal-modal-contact')" class="w-full py-3 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-colors uppercase text-xs font-mono-tech cursor-pointer">Close Window</button>
+        </div>
+    </div>
+
+    <!-- LOCO KWOKKA MASCOT EASTER EGG MODAL -->
+    <div id="loco-mascot-modal" role="dialog" aria-modal="true" aria-label="Official Mascot Message" onclick="if(event.target === this) closeLocoMascotModal()" class="fixed inset-0 z-[250] bg-black/90 hidden flex-col items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity">
+        <div class="cyber-rack w-full max-w-md p-6 sm:p-7 rounded-2xl flex flex-col items-center gap-4 relative shadow-[0_0_60px_rgba(245,158,11,0.35)] border border-amber-400/50 text-center transform scale-95 transition-transform">
+            <div class="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.5)] shrink-0">
+                <img src="./assets/loco-kwokka.jpg" alt="Loco Kwokka" width="80" height="80" loading="lazy" decoding="async" class="w-full h-full object-cover object-[50%_35%]">
+                <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 text-[8px] font-mono-tech font-bold text-amber-400 border border-amber-400/40 uppercase">BOSS</span>
+            </div>
+            <div>
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[10px] font-mono-tech font-black uppercase tracking-widest inline-block mb-1.5">
+                    🕶️ OFFICIAL MASCOT
+                </span>
+                <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider">
+                    Loco Kwokka Says:
+                </h3>
+            </div>
+            <div class="p-4 rounded-xl bg-black/70 border border-amber-400/30 text-amber-200 font-mono-tech text-xs sm:text-sm font-bold leading-relaxed shadow-inner">
+                “Yo, tip somebody else, homie! Loco Kwokka is way too rich and famous, cholo! 🕶️🧢”
+                <div class="mt-2 text-[10px] text-gray-400 font-normal">
+                    (Tip a real broadcaster! Loco Kwokka is the official mascot boss of Whutcha)
+                </div>
+            </div>
+            <div class="w-full space-y-2 pt-1 font-mono-tech">
+                <a href="./leaderboard.html" class="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 active:scale-95">
+                    <span>🏆 Explore Other Broadcasters</span>
+                    <span>→</span>
+                </a>
+                <button onclick="closeLocoMascotModal()" class="w-full py-2.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer">
+                    Got it, Boss! 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal & Haptic Engine -->
+    <script>
+        window.vibrate = function(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); };
+        window.openModal = function(id) {
+            window.vibrate([40]);
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            const content = modal.querySelector('div');
+            modal.classList.remove('hidden', 'pointer-events-none');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                if (content) content.classList.remove('scale-95');
+            }, 10);
+        };
+        window.closeModal = function(id) {
+            window.vibrate([20]);
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            const content = modal.querySelector('div');
+            modal.classList.add('opacity-0');
+            if (content) content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden', 'pointer-events-none');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+        window.openLocoMascotModal = function() {
+            window.vibrate([40, 40]);
+            const modal = document.getElementById('loco-mascot-modal');
+            if (!modal) return;
+            const content = modal.querySelector('.cyber-rack');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                if (content) content.classList.remove('scale-95');
+            }, 10);
+        };
+        window.closeLocoMascotModal = function() {
+            window.vibrate([20]);
+            const modal = document.getElementById('loco-mascot-modal');
+            if (!modal) return;
+            const content = modal.querySelector('.cyber-rack');
+            modal.classList.add('opacity-0');
+            if (content) content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                ['legal-modal-tos', 'legal-modal-privacy', 'legal-modal-contact'].forEach(id => {
+                    const m = document.getElementById(id);
+                    if (m && !m.classList.contains('hidden')) window.closeModal(id);
+                });
+                const locoM = document.getElementById('loco-mascot-modal');
+                if (locoM && !locoM.classList.contains('hidden')) window.closeLocoMascotModal();
+                const claimM = document.getElementById('claim-modal');
+                if (claimM && !claimM.classList.contains('hidden') && typeof window.closeClaimModal === 'function') window.closeClaimModal();
+                const statusM = document.getElementById('video-status-modal');
+                if (statusM && !statusM.classList.contains('hidden') && typeof window.closeVideoStatusModal === 'function') window.closeVideoStatusModal();
+                const bountyM = document.getElementById('bounty-success-modal');
+                if (bountyM && !bountyM.classList.contains('hidden') && typeof window.closeBountyModal === 'function') window.closeBountyModal();
+            }
+        });
+    </script>
+
+    <script type="module">
+        const supabaseUrl = 'https://kjoffilncbybquvjytxx.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        let currentTab = 'video';
+        let streamerId = null;
+        let currentProfile = null;
+        let minVideoPrice = 1;
+        let minCostreamPrice = 10;
+        let currentMinPrice = 5;
+        let payoutLink = '';
+        let viewerDeviceId = '';
+        let isViewerBanned = false;
+
+        // Generate or retrieve persistent viewer device ID for moderation
+        try {
+            viewerDeviceId = localStorage.getItem('whutcha_device_id');
+            if (!viewerDeviceId) {
+                viewerDeviceId = 'dev_' + crypto.randomUUID();
+                localStorage.setItem('whutcha_device_id', viewerDeviceId);
+            }
+        } catch(e) {
+            viewerDeviceId = 'dev_anon_' + Math.floor(Math.random()*100000);
+        }
+
+        async function checkViewerBanStatus(targetStreamer) {
+            try {
+                // 1. Local device ban cache (for fast offline / demo response)
+                const localBans = JSON.parse(localStorage.getItem('whutcha_local_banned_devices') || '[]');
+                if (localBans.includes(viewerDeviceId)) {
+                    applyBannedUi();
+                    return;
+                }
+                // 2. Whutcha Banishment Ledger Check
+                const sId = targetStreamer || streamerId || (currentProfile && currentProfile.id);
+                if (sId && supabase) {
+                    const { data } = await supabase
+                        .from('banned_viewers')
+                        .select('id')
+                        .eq('streamer_id', sId)
+                        .eq('viewer_device_id', viewerDeviceId)
+                        .maybeSingle();
+                    if (data && data.id) {
+                        applyBannedUi();
+                    }
+                }
+            } catch(e) {
+                console.warn("Ban verification check skipped:", e);
+            }
+        }
+
+        function applyBannedUi() {
+            isViewerBanned = true;
+            const btn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('submit-btn-text');
+            const banner = document.getElementById('viewer-banned-banner');
+            if (btn) {
+                btn.disabled = true;
+                btn.className = "w-full mt-6 py-4 bg-red-950/60 border border-red-500/50 text-red-300 font-mono-tech font-black text-xs uppercase tracking-wider rounded-xl cursor-not-allowed opacity-90";
+            }
+            if (btnText) {
+                btnText.innerText = "🚫 DEVICE RESTRICTED BY BROADCASTER";
+            }
+            if (banner) {
+                banner.classList.remove('hidden');
+            }
+        }
+
+        // MediaRecorder
+        let stream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let finalVideoBlob = null;
+        let isRecording = false;
+        const urlParams = new URLSearchParams(window.location.search);
+        streamerId = urlParams.get('streamer') || urlParams.get('c');
+
+        function formatExternalUrl(url) {
+            if (!url) return '';
+            const trimmed = url.trim();
+            return /^https?:\/\//i.test(trimmed) ? trimmed : 'https://' + trimmed;
+        }
+
+        function sanitize(str) {
+            return String(str || '').replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag]));
+        }
+
+        function renderNoStreamerScreen() {
+            document.body.innerHTML = `
+                <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                    <div class="absolute inset-0 bg-[radial-gradient(#151926_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
+                    <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.12)_0%,transparent_60%)] filter blur-3xl pointer-events-none"></div>
+                    <div class="absolute bottom-[10%] right-[20%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(168,0,255,0.1)_0%,transparent_60%)] filter blur-3xl pointer-events-none"></div>
+                </div>
+                <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 text-center font-mono-tech relative z-20">
+                    <div class="cyber-rack cyber-border-dual p-8 sm:p-10 rounded-3xl max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f0ff] to-[#a800ff] p-[1.5px] shadow-[0_0_30px_rgba(0,240,255,0.4)] mb-6 flex-shrink-0">
+                            <div class="w-full h-full bg-[#0a0c12] rounded-[14px] flex items-center justify-center">
+                                <svg class="w-8 h-8 text-[#00f0ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-[10px] uppercase tracking-widest mb-3">
+                            <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                            LIVE VIDEO &amp; CO-STREAM PORTAL
+                        </div>
+                        <h2 class="text-2xl font-black text-white uppercase tracking-wider mb-2">Select a Creator</h2>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-6 font-sans">You've accessed Whutcha without specifying a broadcaster. Discover live Twitch & Kick creators or enter their channel handle below.</p>
+                        <div class="space-y-3 w-full">
+                            <a href="./leaderboard.html" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#00f0ff] to-[#38f4ff] hover:opacity-95 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+                                <span>🏆 Explore Creators Directory</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            <form onsubmit="event.preventDefault(); const val=document.getElementById('input-quick-streamer').value.trim(); if(val) window.location.href='./viewer.html?streamer='+encodeURIComponent(val);" class="flex gap-2 w-full pt-1">
+                                <input id="input-quick-streamer" aria-label="Enter channel handle" type="text" placeholder="Enter channel handle (e.g. LocoKwokka)" class="flex-1 bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00f0ff] font-mono-tech">
+                                <button type="submit" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold uppercase transition-all">Go</button>
+                            </form>
+                            <a href="./index.html" class="inline-block pt-3 text-[10px] text-gray-500 hover:text-white uppercase tracking-widest transition-colors">
+                                ← Streamer Sign In
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderNotFoundScreen(rawHandle) {
+            const clean = sanitize(rawHandle);
+            document.body.innerHTML = `
+                <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                    <div class="absolute inset-0 bg-[radial-gradient(#151926_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
+                    <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(245,158,11,0.1)_0%,transparent_60%)] filter blur-3xl pointer-events-none"></div>
+                </div>
+                <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 text-center font-mono-tech relative z-20">
+                    <div class="cyber-rack cyber-border-dual p-8 sm:p-10 rounded-3xl max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-400 flex items-center justify-center text-3xl mb-5 shadow-[0_0_30px_rgba(245,158,11,0.25)]">
+                            📡
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-[10px] uppercase tracking-widest mb-3">
+                            CHANNEL NOT FOUND
+                        </div>
+                        <h2 class="text-2xl font-black text-white uppercase tracking-wider mb-2">Channel Not Active Yet</h2>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-6 font-sans">The broadcaster channel <code class="text-amber-300 font-bold font-mono-tech">@${clean}</code> has not been claimed or registered on Whutcha yet.</p>
+                        <div class="space-y-3 w-full">
+                            <a href="./leaderboard.html" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#00f0ff] to-[#38f4ff] hover:opacity-95 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+                                <span>🏆 Browse Active Creators</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            <a href="./index.html?claim=${encodeURIComponent(clean)}" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-[#00f0ff] border border-[#00f0ff]/30 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                                <span>Are you @${clean}? Claim Channel</span>
+                            </a>
+                            <a href="./index.html" class="inline-block pt-2 text-[10px] text-gray-500 hover:text-white uppercase tracking-widest transition-colors">
+                                ← Streamer Sign In
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!streamerId) {
+                const stored = localStorage.getItem('streamerID');
+                if (stored && stored !== 'demo_broadcaster') {
+                    streamerId = stored;
+                } else {
+                    streamerId = 'LocoKwokka';
+                }
+            }
+            updatePricing(minVideoPrice);
+            let profile = null;
+            const lowerId = (streamerId || '').toLowerCase();
+            const isDemoAlias = (lowerId === 'demo_broadcaster' || lowerId === 'demo_observer' || lowerId === 'locokwokka' || lowerId === 'loco_kwokka' || lowerId === 'demo');
+
+            if (isDemoAlias) {
+                profile = {
+                    id: streamerId,
+                    username: 'LocoKwokka',
+                    avatar_url: './assets/loco-kwokka.jpg',
+                    min_video_price: 5,
+                    min_costream_price: 15,
+                    external_pay_link: '',
+                    is_public_directory: false,
+                    claimed_by: streamerId,
+                    delisted: false,
+                    bio: 'Official Whutcha Demo Channel',
+                    platform: 'Twitch',
+                    category: 'Live Demo'
+                };
+            } else {
+                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(streamerId);
+                if (isUuid) {
+                    const { data } = await supabase
+                        .from('profiles')
+                        .select('id, username, avatar_url, min_video_price, min_costream_price, external_pay_link, is_public_directory, claimed_by, delisted, bio, platform, category')
+                        .eq('id', streamerId)
+                        .maybeSingle();
+                    profile = data;
+                }
+                if (!profile) {
+                    const { data: userProfile } = await supabase
+                        .from('profiles')
+                        .select('id, username, avatar_url, min_video_price, min_costream_price, external_pay_link, is_public_directory, claimed_by, delisted, bio, platform, category')
+                        .ilike('username', streamerId)
+                        .maybeSingle();
+                    if (userProfile) {
+                        profile = userProfile;
+                        streamerId = userProfile.id; // Resolve to canonical ID
+                    }
+                }
+            }
+
+            if (!profile) {
+                renderNotFoundScreen(streamerId);
+                return;
+            }
+
+            currentProfile = profile;
+
+            function sanitizeCreatorHandle(raw) {
+                if (!raw) return 'Broadcaster';
+                if (raw.includes('@')) {
+                    const namePart = raw.split('@')[0];
+                    return namePart.charAt(0).toUpperCase() + namePart.slice(1);
+                }
+                if (raw.length === 36 && raw.includes('-')) {
+                    return 'Broadcaster';
+                }
+                return raw;
+            }
+
+            const cleanHandle = sanitizeCreatorHandle(profile.username || streamerId);
+            const creatorHandle = cleanHandle;
+            document.title = `Send Video to @${cleanHandle} | Whutcha`;
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', `Send Video to @${cleanHandle}! 🔴`);
+            document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `Send Video to @${cleanHandle}! 🔴`);
+
+            if (profile.delisted) {
+                document.body.innerHTML = `
+                    <div class="flex flex-col h-screen items-center justify-center p-6 text-center font-mono-tech">
+                        <div class="w-14 h-14 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-400 flex items-center justify-center text-2xl mb-4 shadow-[0_0_30px_rgba(239,68,68,0.3)]">🚫</div>
+                        <h2 class="text-white text-lg font-black uppercase tracking-wider mb-2">Channel Removed</h2>
+                        <p class="text-gray-400 text-xs max-w-sm leading-relaxed font-sans">This creator channel has been removed from the Whutcha directory upon request.</p>
+                        <a href="./leaderboard.html" class="mt-6 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all">Browse Creators</a>
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById('streamer-name').innerText = cleanHandle;
+            if (profile.avatar_url) {
+                document.getElementById('streamer-avatar-container').innerHTML = `<img src="${profile.avatar_url}" alt="${cleanHandle}" width="56" height="56" fetchpriority="high" decoding="async" class="w-full h-full object-cover rounded-xl">`;
+            } else {
+                document.getElementById('streamer-avatar').innerText = cleanHandle.charAt(0).toUpperCase();
+            }
+
+            await checkViewerBanStatus(profile.id);
+
+            const platformBadge = document.getElementById('creator-platform-badge');
+            if (platformBadge && (profile.platform || profile.category)) {
+                platformBadge.innerText = `${profile.platform || 'Twitch'}${profile.category ? ' • ' + profile.category : ''}`;
+                platformBadge.classList.remove('hidden');
+            }
+            const bioEl = document.getElementById('creator-bio-text');
+            if (bioEl && profile.bio) {
+                bioEl.innerText = profile.bio;
+                bioEl.classList.remove('hidden');
+            }
+
+            // Sync Streamer Cockpit Nav and Self-Preview Indicator
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const navBtn = document.getElementById('nav-streamer-portal');
+                const navLabel = document.getElementById('nav-streamer-label');
+                const previewBadge = document.getElementById('creator-preview-badge');
+                const navLeaderboardBtn = document.getElementById('nav-leaderboard-btn');
+
+                if (session && session.user) {
+                    // USER DIRECTIVE: When logged in as creator, eliminate return to Leaderboard! ONLY Back to Dashboard!
+                    if (navLeaderboardBtn) {
+                        navLeaderboardBtn.remove();
+                    }
+
+                    if (navBtn && navLabel) {
+                        navBtn.href = './dashboard.html';
+                        navBtn.target = '_self';
+                        navLabel.textContent = '← BACK TO COCKPIT ⚡';
+                        navBtn.className = 'w-full justify-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#00f0ff]/15 via-white/[0.05] to-[#a800ff]/15 hover:from-[#00f0ff]/25 hover:to-[#a800ff]/25 border border-[#00f0ff]/50 text-[#00f0ff] hover:text-white transition-all text-xs font-mono-tech uppercase tracking-wider shadow-[0_0_15px_rgba(0,240,255,0.25)] group cursor-pointer';
+                    }
+
+                    // Re-route any in-page back links away from leaderboard to cockpit
+                    document.querySelectorAll('a[href="./leaderboard.html"]').forEach(a => {
+                        a.href = './dashboard.html';
+                        if (a.textContent.includes('Leaderboard') || a.textContent.includes('Browse')) {
+                            a.textContent = '← Return to Streamer Cockpit';
+                        }
+                    });
+
+                    const isOwnChannel = (session.user.id === profile.id) ||
+                        (profile.username && session.user.user_metadata?.username && profile.username.toLowerCase() === session.user.user_metadata.username.toLowerCase()) ||
+                        (profile.id === localStorage.getItem('streamerID'));
+
+                    if (isOwnChannel && previewBadge) {
+                        previewBadge.classList.remove('hidden');
+                    }
+                }
+            } catch(e) {
+                console.warn("Session check in viewer portal:", e);
+            }
+
+            if (profile.min_video_price) minVideoPrice = profile.min_video_price;
+            if (profile.min_costream_price) minCostreamPrice = profile.min_costream_price;
+            if (profile.external_pay_link) payoutLink = formatExternalUrl(profile.external_pay_link);
+
+            // Show subtle ownership footer & escrow pool if unclaimed directory channel
+            const isUnclaimedDirectory = Boolean(profile.is_public_directory && !profile.claimed_by);
+            if (isUnclaimedDirectory) {
+                const banner = document.getElementById('public-directory-banner');
+                if (banner) banner.classList.remove('hidden');
+
+                try {
+                    const { data: poolData } = await supabase.rpc('get_streamer_escrow_pool', { p_streamer_id: profile.id });
+                    if (poolData && parseFloat(poolData.total_amount) > 0) {
+                        const notice = document.getElementById('escrow-pool-notice');
+                        if (notice) {
+                            notice.classList.remove('hidden');
+                            notice.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span><span>🔥 <strong class="text-amber-400 font-black">$${parseFloat(poolData.total_amount).toFixed(2)}</strong> in pending video donations waiting for @${cleanHandle}!</span>`;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            updatePricing(minVideoPrice);
+            await startCamera();
+        });
+
+        window.closeBountyModal = function() {
+            const m = document.getElementById('bounty-success-modal');
+            if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+            window.location.reload();
+        };
+
+        window.copyBountyPitch = function() {
+            const text = document.getElementById('bounty-pitch-text').value;
+            const btn = document.getElementById('btn-copy-pitch');
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="text-black font-black">✅ COPIED! PASTE IN CHAT!</span>';
+                setTimeout(() => { btn.innerHTML = orig; }, 3000);
+            }).catch(() => {
+                const el = document.getElementById('bounty-pitch-text');
+                el.select();
+                document.execCommand('copy');
+                alert("Copied to clipboard!");
+            });
+        };
+
+        window.shareBountyTwitter = function() {
+            const text = document.getElementById('bounty-pitch-text').value;
+            if (!text) return;
+            const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(tweetUrl, '_blank');
+        };
+
+        window.openClaimModal = function() {
+            const m = document.getElementById('claim-modal');
+            if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+        };
+        window.closeClaimModal = function() {
+            const m = document.getElementById('claim-modal');
+            if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        };
+
+        window.claimWithAuth = async function() {
+            const btnOAuth = document.getElementById('btn-claim-oauth');
+            const btnSubmit = document.getElementById('btn-claim-token');
+            if (btnOAuth) { btnOAuth.disabled = true; btnOAuth.innerText = 'VERIFYING...'; }
+            if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.innerText = '...'; }
+
+            const restoreButtons = () => {
+                if (btnOAuth) { btnOAuth.disabled = false; btnOAuth.innerHTML = '<span>⚡ Claim with Account / OAuth</span>'; }
+                if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerText = 'Submit'; }
+            };
+
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    sessionStorage.setItem('whutcha_claim_streamer', streamerId);
+                    const tokenVal = (document.getElementById('claim-token-input').value || '').trim();
+                    if (tokenVal) sessionStorage.setItem('whutcha_claim_token', tokenVal);
+                    alert("Please sign in or create an account to verify channel ownership.");
+                    window.location.href = `./index.html?claim=${encodeURIComponent(streamerId)}`;
+                    return;
+                }
+
+                const tokenInput = (document.getElementById('claim-token-input').value || '').trim();
+                const { data, error } = await supabase.rpc('claim_creator_profile', {
+                    p_streamer_id: streamerId,
+                    p_claim_token: tokenInput || null
+                });
+                if (error) throw error;
+                if (data && data.status === 'success') {
+                    alert("🎉 Channel claimed successfully! Redirecting to your Broadcaster Dashboard...");
+                    window.location.href = './dashboard.html';
+                } else {
+                    alert(data ? data.message : "Claim request failed.");
+                    restoreButtons();
+                }
+            } catch(e) {
+                alert("[Whutcha Protocol 400]: Channel Claim Verification Failed: " + e.message);
+                restoreButtons();
+            }
+        };
+
+        window.delistChannel = async function() {
+            const confirmed = confirm("Are you sure you want to remove this channel from the public directory?");
+            if (!confirmed) return;
+            try {
+                const { data, error } = await supabase.rpc('delist_creator_profile', {
+                    p_streamer_id: streamerId
+                });
+                if (error) throw error;
+                alert("Channel removed successfully.");
+                window.location.reload();
+            } catch(e) {
+                alert("[Whutcha Protocol 400]: Channel Delisting Failed: " + e.message);
+            }
+        };
+
+        function syncWhaleVipDopamine(val) {
+            if (isViewerBanned) return;
+            const num = parseFloat(val);
+            const isValid = !isNaN(num) && num >= currentMinPrice;
+            const isWhale = isValid && num >= 50;
+            const btn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('submit-btn-text');
+            const banner = document.getElementById('whale-vip-dopamine-banner');
+            const amountInput = document.getElementById('amount-input');
+
+            if (!isValid) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.className = "w-full mt-6 py-4 bg-red-950/40 border border-red-500/40 text-red-300 font-mono-tech font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-not-allowed";
+                }
+                if (btnText) {
+                    btnText.innerText = `MINIMUM IS $${currentMinPrice.toFixed(2)}`;
+                }
+                if (amountInput) {
+                    amountInput.classList.add('border-red-500/70', 'text-red-300');
+                    amountInput.classList.remove('border-amber-400/60', 'text-amber-300', 'border-white/10', 'text-white');
+                }
+                if (banner) banner.classList.add('hidden');
+                return;
+            }
+
+            // Valid amount
+            if (btn) {
+                btn.disabled = false;
+                if (isWhale) {
+                    btn.className = "w-full mt-6 py-4 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 hover:brightness-110 text-black font-black text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_0_35px_rgba(250,204,21,0.55)] disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden group cursor-pointer";
+                } else {
+                    btn.className = "w-full mt-6 py-4 bg-[#00f0ff] hover:bg-[#38f4ff] text-black font-black text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_0_30px_rgba(0,240,255,0.4)] disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden group cursor-pointer";
+                }
+            }
+            if (btnText) {
+                btnText.innerText = isWhale ? `👑 SEND VIP ALERT — $${num.toFixed(2)}` : `SEND FOR $${num.toFixed(2)}`;
+            }
+            if (banner) {
+                if (isWhale) banner.classList.remove('hidden');
+                else banner.classList.add('hidden');
+            }
+            if (amountInput) {
+                amountInput.classList.remove('border-red-500/70', 'text-red-300');
+                if (isWhale) {
+                    amountInput.classList.add('border-amber-400/60', 'text-amber-300');
+                    amountInput.classList.remove('border-white/10', 'text-white');
+                } else {
+                    amountInput.classList.remove('border-amber-400/60', 'text-amber-300');
+                    amountInput.classList.add('border-white/10', 'text-white');
+                }
+            }
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                const pVal = parseFloat(b.dataset.val);
+                const pWhale = pVal >= 50;
+                if (Math.abs(pVal - num) < 0.01) {
+                    b.className = pWhale
+                        ? "preset-btn flex-1 py-2 px-1 bg-amber-400/20 border-2 border-amber-400 rounded-xl text-amber-300 font-mono-tech font-black text-xs shadow-[0_0_15px_rgba(250,204,21,0.35)] transition-all flex flex-col items-center gap-0.5"
+                        : "preset-btn flex-1 py-2 px-1 bg-[#00f0ff]/20 border-2 border-[#00f0ff] rounded-xl text-[#00f0ff] font-mono-tech font-black text-xs shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all flex flex-col items-center gap-0.5";
+                } else {
+                    b.className = pWhale
+                        ? "preset-btn flex-1 py-2 px-1 bg-amber-500/10 border border-amber-400/40 rounded-xl text-amber-300 font-mono-tech font-bold text-xs hover:border-amber-400 transition-all flex flex-col items-center gap-0.5"
+                        : "preset-btn flex-1 py-2 px-1 bg-black/40 border border-white/10 rounded-xl text-gray-300 font-mono-tech font-bold text-xs hover:border-[#00f0ff] hover:text-[#00f0ff] transition-all flex flex-col items-center gap-0.5";
+                }
+            });
+        }
+
+        function updatePricing(minPrice) {
+            currentMinPrice = Math.max(1, parseFloat(minPrice) || 1);
+            const basePrice = currentMinPrice;
+            document.getElementById('min-price-label').innerText = `Min: $${currentMinPrice}`;
+            document.getElementById('amount-input').value = basePrice;
+            document.getElementById('amount-input').min = currentMinPrice;
+            
+            // NODE 2: Dynamic Pricing Multipliers [1x, 2x, 5x, 10x]
+            const multipliers = [1, 2, 5, 10];
+            const presets = multipliers.map(m => ({ mult: m, val: m * basePrice }));
+
+            document.getElementById('price-presets').innerHTML = presets.map(p => {
+                const isWhaleTier = p.val >= 50 || p.mult === 10;
+                const badgeText = isWhaleTier ? `👑 ${p.mult}x` : `${p.mult}x`;
+                return `<button type="button" class="preset-btn flex-1 py-2 px-1 bg-black/40 border border-white/10 rounded-xl text-gray-300 font-mono-tech font-bold text-xs transition-all flex flex-col items-center gap-0.5 cursor-pointer" data-val="${p.val}" data-mult="${p.mult}">
+                    <span class="text-[9px] uppercase tracking-wider ${isWhaleTier ? 'text-amber-400 font-black' : 'text-gray-500'}">${badgeText}</span>
+                    <span>$${p.val}</span>
+                </button>`;
+            }).join('');
+
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.addEventListener('click', () => {
+                    const targetVal = parseFloat(b.dataset.val);
+                    if (window.vibrate) window.vibrate(targetVal >= 50 ? [40, 60, 40] : [25]);
+                    document.getElementById('amount-input').value = targetVal;
+                    syncWhaleVipDopamine(targetVal);
+                });
+            });
+
+            syncWhaleVipDopamine(basePrice);
+        }
+
+        document.getElementById('amount-input').addEventListener('input', (e) => {
+            const val = Math.max(0, parseFloat(e.target.value) || 0);
+            syncWhaleVipDopamine(val);
+        });
+
+        // Tabs
+        document.getElementById('tab-video').addEventListener('click', async () => {
+            currentTab = 'video';
+            document.getElementById('tab-video').className = 'flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg bg-[#00f0ff] text-black shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center gap-1.5';
+            document.getElementById('tab-costream').className = 'flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg text-gray-400 hover:text-white transition-all flex items-center justify-center gap-1.5';
+            document.getElementById('video-section').classList.remove('hidden');
+            document.getElementById('costream-section').classList.add('hidden');
+            updatePricing(minVideoPrice);
+            await startCamera();
+        });
+
+        document.getElementById('tab-costream').addEventListener('click', () => {
+            currentTab = 'costream';
+            document.getElementById('tab-costream').className = 'flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg bg-[#a800ff] text-white shadow-[0_0_15px_rgba(168,0,255,0.4)] transition-all flex items-center justify-center gap-1.5';
+            document.getElementById('tab-video').className = 'flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-lg text-gray-400 hover:text-white transition-all flex items-center justify-center gap-1.5';
+            document.getElementById('video-section').classList.add('hidden');
+            document.getElementById('costream-section').classList.remove('hidden');
+            updatePricing(minCostreamPrice);
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        });
+
+        async function startCamera() {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            const cameraHint = document.getElementById('record-hint');
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 720 },
+                        height: { ideal: 1280 }
+                    }, 
+                    audio: true 
+                });
+                document.getElementById('camera-preview').srcObject = stream;
+                if (cameraHint) {
+                    cameraHint.innerText = "Tap To Record Video";
+                    cameraHint.className = "absolute bottom-24 left-1/2 -translate-x-1/2 bg-black/90 px-4 py-2 rounded-full text-[#00f0ff] font-mono-tech font-bold text-xs uppercase tracking-widest border border-[#00f0ff]/30 shadow-[0_0_15px_rgba(0,240,255,0.3)] animate-pulse pointer-events-none whitespace-nowrap";
+                }
+            } catch (err) { 
+                console.error('Camera access denied:', err);
+                if (cameraHint) {
+                    cameraHint.innerText = "Camera Access Blocked";
+                    cameraHint.className = "absolute bottom-24 left-1/2 -translate-x-1/2 bg-black/90 px-4 py-2 rounded-full text-amber-400 font-mono-tech font-bold text-xs uppercase tracking-widest border border-amber-400/40 shadow-[0_0_15px_rgba(251,191,36,0.3)] pointer-events-none whitespace-nowrap";
+                }
+            }
+        }
+
+        // Recording
+        const recordBtn = document.getElementById('record-btn');
+        const timerDisplay = document.getElementById('timer-display');
+        let recordSeconds = 0;
+        let recordTimerInterval = null;
+        let isRecordLocked = false;
+
+        function stopRecordingSession() {
+            if (recordTimerInterval) {
+                clearInterval(recordTimerInterval);
+                recordTimerInterval = null;
+            }
+            if (timerDisplay) timerDisplay.classList.add('hidden');
+            if (isRecording && mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.innerHTML = '<div class="w-12 h-12 bg-[#00f0ff] rounded-full shadow-[0_0_20px_rgba(0,240,255,0.6)]"></div>';
+            }
+        }
+
+        recordBtn.addEventListener('click', () => {
+            if (isRecordLocked) return;
+            isRecordLocked = true;
+            setTimeout(() => isRecordLocked = false, 500);
+            
+            if (!isRecording) {
+                if (!stream) {
+                    alert("Please allow camera access to record a video message.");
+                    startCamera();
+                    return;
+                }
+                if (window.vibrate) window.vibrate([40]);
+                recordedChunks = [];
+                const options = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? {mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 1000000} : {mimeType: 'video/mp4', videoBitsPerSecond: 1000000};
+                mediaRecorder = new MediaRecorder(stream, options);
+                mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    finalVideoBlob = new Blob(recordedChunks, {type: options.mimeType});
+                    document.getElementById('camera-preview').classList.add('hidden');
+                    const playback = document.getElementById('playback-video');
+                    playback.src = URL.createObjectURL(finalVideoBlob);
+                    playback.classList.remove('hidden');
+                    document.getElementById('retake-ui').classList.remove('hidden');
+                    document.getElementById('recording-ui').classList.add('hidden');
+                    
+                    // VAMPIRE MODE: Stop hardware camera
+                    if (stream) {
+                        stream.getTracks().forEach(t => t.stop());
+                        stream = null;
+                    }
+                    
+                    const nickInput = document.getElementById('nickname');
+                    nickInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    nickInput.classList.add('ring-2', 'ring-[#00f0ff]');
+                    setTimeout(() => nickInput.classList.remove('ring-2', 'ring-[#00f0ff]'), 1500);
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                recordSeconds = 0;
+                if (timerDisplay) {
+                    timerDisplay.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block mr-1.5"></span><span>00:00 / 00:30</span>';
+                    timerDisplay.classList.remove('hidden');
+                }
+                document.getElementById('record-hint').style.display = 'none';
+                recordBtn.innerHTML = '<div class="w-8 h-8 bg-red-500 rounded shadow-[0_0_20px_rgba(239,68,68,0.7)] flex items-center justify-center text-[9px] font-black text-white font-mono-tech">REC</div>';
+                
+                recordTimerInterval = setInterval(() => {
+                    recordSeconds++;
+                    const pad = n => n.toString().padStart(2, '0');
+                    if (timerDisplay) {
+                        timerDisplay.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block mr-1.5"></span><span>${pad(Math.floor(recordSeconds/60))}:${pad(recordSeconds%60)} / 00:30</span>`;
+                    }
+                    if (recordSeconds >= 30) {
+                        stopRecordingSession();
+                    }
+                }, 1000);
+            } else {
+                if (window.vibrate) window.vibrate([25]);
+                stopRecordingSession();
+            }
+        });
+
+        document.getElementById('retake-btn').addEventListener('click', async () => {
+            if (window.vibrate) window.vibrate([30]);
+            finalVideoBlob = null;
+            const fileInputEl = document.getElementById('video-file-input');
+            if (fileInputEl) fileInputEl.value = '';
+            if (recordTimerInterval) {
+                clearInterval(recordTimerInterval);
+                recordTimerInterval = null;
+            }
+            if (timerDisplay) timerDisplay.classList.add('hidden');
+            document.getElementById('camera-preview').classList.remove('hidden');
+            document.getElementById('playback-video').classList.add('hidden');
+            document.getElementById('retake-ui').classList.add('hidden');
+            document.getElementById('recording-ui').classList.remove('hidden');
+            document.getElementById('record-hint').style.display = 'block';
+            await startCamera();
+        });
+
+        // Device File Upload Handler
+        const fileInput = document.getElementById('video-file-input');
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const MAX_FILE_SIZE = 25 * 1024 * 1024;
+                if (file.size > MAX_FILE_SIZE) {
+                    alert("Video file is too large! Maximum allowed size is 25MB.");
+                    fileInput.value = '';
+                    return;
+                }
+                if (window.vibrate) window.vibrate([40]);
+                finalVideoBlob = file;
+                if (recordTimerInterval) {
+                    clearInterval(recordTimerInterval);
+                    recordTimerInterval = null;
+                }
+                if (timerDisplay) timerDisplay.classList.add('hidden');
+                document.getElementById('camera-preview').classList.add('hidden');
+                const playback = document.getElementById('playback-video');
+                playback.src = URL.createObjectURL(finalVideoBlob);
+                playback.classList.remove('hidden');
+                document.getElementById('retake-ui').classList.remove('hidden');
+                document.getElementById('recording-ui').classList.add('hidden');
+                
+                // VAMPIRE MODE: Turn off camera hardware
+                if (stream) {
+                    stream.getTracks().forEach(t => t.stop());
+                    stream = null;
+                }
+                
+                const nickInput = document.getElementById('nickname');
+                nickInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                nickInput.classList.add('ring-2', 'ring-[#00f0ff]');
+                setTimeout(() => nickInput.classList.remove('ring-2', 'ring-[#00f0ff]'), 1500);
+            });
+        }
+
+        // Submit
+        let currentDonationId = null;
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            if (isViewerBanned) {
+                alert("🚫 Your device has been restricted by this broadcaster.");
+                return;
+            }
+
+            const currentStreamerLower = String(streamerId || (currentProfile && currentProfile.username) || '').toLowerCase();
+            if (currentStreamerLower.includes('loco') || currentStreamerLower.includes('kwokka') || currentStreamerLower === 'demo_broadcaster') {
+                if (typeof window.openLocoMascotModal === 'function') {
+                    window.openLocoMascotModal();
+                } else {
+                    alert("Yo, tip somebody else, homie! Loco Kwokka is way too rich and famous, cholo! 🕶️🧢");
+                }
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            const uploadProgressBar = document.getElementById('upload-progress-bar');
+            const rawAmount = parseFloat(document.getElementById('amount-input').value);
+            
+            if (isNaN(rawAmount) || rawAmount < currentMinPrice) {
+                alert(`Minimum amount is $${currentMinPrice.toFixed(2)}`);
+                return;
+            }
+            const amount = rawAmount;
+            if (currentTab === 'video' && !finalVideoBlob) {
+                alert('Please record a video message first!');
+                return;
+            }
+            
+            btn.disabled = true;
+            document.getElementById('submit-btn-text').innerText = "TRANSMITTING...";
+            if (uploadProgressBar) uploadProgressBar.style.width = '25%';
+            
+            try {
+                let videoHash = "costream_request";
+                if (currentTab === 'video') {
+                    const MAX_FILE_SIZE = 25 * 1024 * 1024;
+                    if (finalVideoBlob.size > MAX_FILE_SIZE) {
+                        throw new Error(`Video is too large! Max allowed is 25MB.`);
+                    }
+                    if (uploadProgressBar) uploadProgressBar.style.width = '55%';
+                    videoHash = `vid_${crypto.randomUUID()}.${finalVideoBlob.type.includes('webm') ? 'webm' : 'mp4'}`;
+                    const { error } = await supabase.storage.from('videos').upload(videoHash, finalVideoBlob);
+                    if (error) throw error;
+                    if (uploadProgressBar) uploadProgressBar.style.width = '80%';
+                }
+                const donationId = 'WTCH-' + Math.floor(100000 + Math.random() * 900000);
+                const rawNick = (document.getElementById('nickname').value || '').trim();
+                const cleanNick = rawNick.slice(0, 25) || 'Anonymous';
+                const rawMemo = (document.getElementById('payment-memo')?.value || '').trim();
+                const cleanMemo = rawMemo ? rawMemo.slice(0, 60) : null;
+                
+                // Escrow Bounty Mode if target is an unclaimed public creator node
+                const isEscrowBounty = Boolean(currentProfile && currentProfile.is_public_directory && !currentProfile.claimed_by);
+
+                const donationData = {
+                    id: donationId,
+                    streamer_id: streamerId,
+                    viewer_device_id: viewerDeviceId,
+                    amount: amount,
+                    username: cleanNick,
+                    videoHash: videoHash,
+                    video_hash: videoHash,
+                    status: isEscrowBounty ? 'escrow' : 'pending',
+                    is_escrow: isEscrowBounty,
+                    payment_memo: cleanMemo,
+                    bounty_message: cleanMemo || (isEscrowBounty ? `Video Bounty from @${cleanNick}` : null)
+                };
+                const { error } = await supabase.from('donations').insert([donationData]);
+                if (error) {
+                    if (videoHash !== "costream_request") {
+                        await supabase.storage.from('videos').remove([videoHash]);
+                    }
+                    if (error.message.includes('SKYNET_BLOCKED')) {
+                        alert("[Whutcha Security 429]: Rate Limit Exceeded (Anti-Bot Shield Active). Please wait 1 minute before sending another request.");
+                        btn.disabled = false;
+                        if (uploadProgressBar) uploadProgressBar.style.width = '0%';
+                        document.getElementById('submit-btn-text').innerText = "PAY & SEND";
+                        return;
+                    }
+                    throw error;
+                }
+                if (uploadProgressBar) uploadProgressBar.style.width = '100%';
+                
+                // Asynchronously trigger Edge Push Alert to wake streamer's phone/desktop
+                supabase.functions.invoke('push-alert', {
+                    body: { record: donationData }
+                }).catch(e => console.log("Push alert background dispatch:", e));
+                
+                // If Escrow Bounty, open Viral Share Modal immediately
+                if (isEscrowBounty) {
+                    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    
+                    const streamerHandle = (currentProfile && currentProfile.username) || streamerId;
+                    const claimLink = `${window.location.origin}/index.html?claim=${encodeURIComponent(streamerHandle)}`;
+                    const pitch = `Yo @${streamerHandle}! Sent you a video message on Whutcha! 🎬 Pre-moderated OBS queue, live fan Co-Streams & auto-records your reaction as a TikTok short. Review & play safe on stream: ${claimLink}`;
+                    
+                    document.getElementById('bounty-pitch-text').value = pitch;
+                    document.getElementById('bounty-subtext').innerText = `Your $${amount.toFixed(2)} video message is locked in escrow for @${streamerHandle}! Copy the pitch below and paste it into their stream chat.`;
+                    
+                    document.getElementById('bounty-success-modal').classList.remove('hidden');
+                    document.getElementById('bounty-success-modal').classList.add('flex');
+                    document.getElementById('submit-btn-text').innerText = "BOUNTY LOCKED! 💰";
+                    return;
+                }
+                
+                if (currentTab === 'costream') {
+                    currentDonationId = donationData.id;
+                    document.getElementById('costream-viewer-modal').classList.remove('hidden');
+                    document.getElementById('costream-viewer-modal').classList.add('flex');
+                    document.getElementById('costream-status-text').innerText = "Waiting for Broadcaster...";
+                    document.getElementById('submit-btn-text').innerText = "IN QUEUE";
+                    
+                    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+                    subscribeToCoStreamApproval(currentDonationId);
+                    
+                    if (payoutLink) {
+                        window.open(formatExternalUrl(payoutLink), '_blank');
+                    } else {
+                        const costreamStatus = document.getElementById('costream-status-text');
+                        if (costreamStatus) {
+                            costreamStatus.innerText = "Waiting for Streamer to Approve...";
+                        }
+                    }
+                } else {
+                    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    
+                    const streamerHandle = (currentProfile && currentProfile.username) || (typeof cleanHandle !== 'undefined' ? cleanHandle : 'Broadcaster');
+                    const trackerStreamerEl = document.getElementById('tracker-streamer-name');
+                    if (trackerStreamerEl) trackerStreamerEl.innerText = `@${streamerHandle}`;
+                    
+                    const statusModal = document.getElementById('video-status-modal');
+                    if (statusModal) {
+                        statusModal.classList.remove('hidden');
+                        statusModal.classList.add('flex');
+                    }
+                    document.getElementById('submit-btn-text').innerText = "IN QUEUE 🕒";
+                    
+                    subscribeToVideoDonationStatus(donationData.id, streamerHandle);
+                    
+                    if (payoutLink) {
+                        window.open(formatExternalUrl(payoutLink), '_blank');
+                    } else {
+                        const subText = document.getElementById('tracker-subtext');
+                        if (subText) {
+                            subText.innerText = `Your video message is in @${streamerHandle}'s moderation queue! Save your receipt link above to get your reaction clip when it plays on stream.`;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("[Whutcha Protocol 500]: Submission failed:", err);
+                if (err.message && (err.message.includes('blocked by this streamer') || err.message.includes('banned'))) {
+                    applyBannedUi();
+                    try {
+                        const localBans = JSON.parse(localStorage.getItem('whutcha_local_banned_devices') || '[]');
+                        if (!localBans.includes(viewerDeviceId)) {
+                            localBans.push(viewerDeviceId);
+                            localStorage.setItem('whutcha_local_banned_devices', JSON.stringify(localBans));
+                        }
+                    } catch(e){}
+                    alert("[Whutcha Security 403]: Broadcaster Moderation: Device restricted by streamer.");
+                    btn.disabled = true;
+                    if (uploadProgressBar) uploadProgressBar.style.width = '0%';
+                    return;
+                }
+                alert("[Whutcha Protocol 500]: Video Donation Transmission Failed: " + (err && err.message ? err.message : String(err)));
+                btn.disabled = false;
+                if (uploadProgressBar) uploadProgressBar.style.width = '0%';
+                document.getElementById('submit-btn-text').innerText = `SEND FOR $${amount.toFixed(2)}`;
+            }
+        });
+    
+        // Whutcha Live Bridge Co-Stream
+        let realtimeChannel = null;
+        let approvalPollInterval = null;
+        let costreamSlaInterval = null;
+        function subscribeToCoStreamApproval(donationId) {
+            // NODE 2: 60-Second Scarcity & Urgency SLA Countdown
+            let slaSeconds = 60;
+            const slaEl = document.getElementById('viewer-costream-sla');
+            if (costreamSlaInterval) clearInterval(costreamSlaInterval);
+            costreamSlaInterval = setInterval(() => {
+                slaSeconds = Math.max(0, slaSeconds - 1);
+                if (slaEl) {
+                    slaEl.innerText = `00:${String(slaSeconds).padStart(2, '0')}s`;
+                    if (slaSeconds <= 15) slaEl.className = "text-red-400 font-black tracking-widest animate-pulse";
+                }
+            }, 1000);
+
+            async function handleApprovedRow(row) {
+                if (approvalPollInterval) {
+                    clearInterval(approvalPollInterval);
+                    approvalPollInterval = null;
+                }
+                if (costreamSlaInterval) {
+                    clearInterval(costreamSlaInterval);
+                    costreamSlaInterval = null;
+                }
+                if (realtimeChannel) {
+                    supabase.removeChannel(realtimeChannel);
+                    realtimeChannel = null;
+                }
+                if (slaEl) {
+                    slaEl.innerText = "LIVE NOW";
+                    slaEl.className = "text-emerald-400 font-black tracking-widest";
+                }
+                document.getElementById('costream-status-text').innerText = "CONNECTING TO LIVE ROOM...";
+                document.getElementById('costream-status-text').classList.remove('animate-pulse');
+                document.getElementById('costream-status-text').classList.add('text-emerald-400');
+                await connectCoStreamRoom(row.join_token);
+            }
+
+            // Local BroadcastChannel Listener (0ms cross-tab sync)
+            try {
+                const costreamBc = new BroadcastChannel('whutcha_viewer_tracker');
+                costreamBc.onmessage = async (e) => {
+                    if (!e.data || (e.data.donationId && e.data.donationId !== donationId)) return;
+                    if (e.data.event === 'costream_approved' && e.data.join_token) {
+                        await handleApprovedRow({ join_token: e.data.join_token });
+                    } else if (e.data.event === 'costream_ended') {
+                        if (approvalPollInterval) clearInterval(approvalPollInterval);
+                        if (costreamSlaInterval) clearInterval(costreamSlaInterval);
+                        alert("[Whutcha Live Bridge 200]: Broadcaster terminated or declined the Co-Stream session.");
+                        window.location.reload();
+                    }
+                };
+            } catch(e){}
+
+            realtimeChannel = supabase
+                .channel('viewer-costream-' + donationId)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'donations',
+                    filter: 'id=eq.' + donationId
+                }, async (payload) => {
+                    if (payload.eventType === 'DELETE' || (payload.eventType === 'UPDATE' && (payload.new.status === 'rejected' || payload.new.status === 'completed'))) {
+                        if (approvalPollInterval) clearInterval(approvalPollInterval);
+                        if (costreamSlaInterval) clearInterval(costreamSlaInterval);
+                        alert("[Whutcha Live Bridge 200]: Broadcaster terminated or declined the Co-Stream session.");
+                        window.location.reload();
+                        return;
+                    }
+                    
+                    const row = payload.new;
+                    if (payload.eventType === 'UPDATE' && row && row.status === 'approved' && row.join_token) {
+                        await handleApprovedRow(row);
+                    }
+                })
+                .subscribe();
+
+            // SUBMARINE MODE: 4s Polling Fallback in case WebSocket lags or reconnects
+            approvalPollInterval = setInterval(async () => {
+                try {
+                    const { data } = await supabase
+                        .from('donations')
+                        .select('status, join_token')
+                        .eq('id', donationId)
+                        .maybeSingle();
+                    if (data) {
+                        if (data.status === 'approved' && data.join_token) {
+                            await handleApprovedRow(data);
+                        } else if (data.status === 'rejected' || data.status === 'completed') {
+                            if (approvalPollInterval) clearInterval(approvalPollInterval);
+                            if (costreamSlaInterval) clearInterval(costreamSlaInterval);
+                            alert("[Whutcha Live Bridge 200]: Broadcaster terminated or declined the Co-Stream session.");
+                            window.location.reload();
+                        }
+                    }
+                } catch(e) {}
+            }, 4000);
+        }
+
+        // Video Donation Status & Reaction Reel Engine (Node 5)
+        let videoStatusChannel = null;
+        let videoStatusPollInterval = null;
+        let currentReactionDownloadUrl = null;
+
+        window.closeVideoStatusModal = function() {
+            const modal = document.getElementById('video-status-modal');
+            if (modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+            // Vampire mode: pause reaction video
+            const vidEl = document.getElementById('reaction-video-element');
+            if (vidEl) {
+                try { vidEl.pause(); } catch(e){}
+            }
+        };
+
+        async function updateVideoStatusUI(row, creatorName) {
+            if (!row) return;
+
+            const stepQueue = document.getElementById('step-queue');
+            const stepLive = document.getElementById('step-live');
+            const stepReaction = document.getElementById('step-reaction');
+            const trackerTitle = document.getElementById('tracker-title');
+            const trackerDot = document.getElementById('tracker-dot');
+            const trackerSubtext = document.getElementById('tracker-subtext');
+
+            // Stage 3: REACTION READY!
+            if (row.reaction_url) {
+                trackerTitle.innerText = "🎬 TikTok Reaction Reel Ready!";
+                trackerDot.className = "w-3 h-3 rounded-full bg-[#a800ff] animate-ping shadow-[0_0_15px_#a800ff]";
+                trackerSubtext.innerText = `🔥 @${creatorName} recorded a personalized reaction for you! Watch it below or download it to post on TikTok & Shorts.`;
+
+                if (stepQueue) stepQueue.className = "p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase";
+                if (stepLive) stepLive.className = "p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase";
+                if (stepReaction) stepReaction.className = "p-2 rounded-lg bg-[#a800ff]/20 border border-[#a800ff]/50 text-[#d480ff] text-[10px] font-bold uppercase shadow-[0_0_15px_rgba(168,0,255,0.4)] animate-pulse";
+
+                const playerContainer = document.getElementById('reaction-player-container');
+                const videoEl = document.getElementById('reaction-video-element');
+                const btnDownload = document.getElementById('btn-download-reaction');
+                const btnShare = document.getElementById('btn-share-reaction');
+                const btnShareTg = document.getElementById('btn-share-telegram');
+
+                if (playerContainer) playerContainer.classList.remove('hidden');
+                if (btnDownload) btnDownload.classList.remove('hidden');
+                if (btnShare) btnShare.classList.remove('hidden');
+                if (btnShareTg) btnShareTg.classList.remove('hidden');
+
+                // Obtain signed URL for private bucket if not already direct
+                let reactionPlayUrl = row.reaction_url;
+                const isDirect = reactionPlayUrl.startsWith('http') || reactionPlayUrl.startsWith('./') || reactionPlayUrl.startsWith('/') || reactionPlayUrl.startsWith('blob:') || reactionPlayUrl.startsWith('data:');
+                if (!isDirect) {
+                    try {
+                        const { data: signData } = await supabase.storage.from('videos').createSignedUrl(row.reaction_url, 3600);
+                        if (signData && signData.signedUrl) {
+                            reactionPlayUrl = signData.signedUrl;
+                        }
+                    } catch(e){}
+                }
+
+                currentReactionDownloadUrl = reactionPlayUrl;
+                if (videoEl && (!videoEl.src || !videoEl.src.includes(reactionPlayUrl))) {
+                    videoEl.src = reactionPlayUrl;
+                    videoEl.load();
+                    confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+                }
+
+                if (videoStatusPollInterval) {
+                    clearInterval(videoStatusPollInterval);
+                    videoStatusPollInterval = null;
+                }
+                return;
+            }
+
+            // Stage 2: LIVE ON STREAM
+            if (row.status === 'approved') {
+                trackerTitle.innerText = "🔴 Live on Stream Right Now!";
+                trackerDot.className = "w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_15px_#10b981]";
+                trackerSubtext.innerText = `Broadcaster approved your video message! It is currently playing live on stream in OBS. Broadcaster reaction in progress...`;
+
+                if (stepQueue) stepQueue.className = "p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase";
+                if (stepLive) stepLive.className = "p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-[10px] font-bold uppercase shadow-[0_0_15px_rgba(16,185,129,0.4)] animate-pulse";
+                if (stepReaction) stepReaction.className = "p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 text-[10px] font-bold uppercase";
+                return;
+            }
+
+            // Stage 1: IN QUEUE
+            if (row.status === 'pending' || row.status === 'escrow') {
+                trackerTitle.innerText = "⏳ In Moderation Queue...";
+                trackerDot.className = "w-3 h-3 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_#f59e0b]";
+                trackerSubtext.innerText = `Your video message was submitted to @${creatorName}! Keep this window open — as soon as they react, your personalized TikTok Reel will appear here.`;
+
+                if (stepQueue) stepQueue.className = "p-2 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-400 text-[10px] font-bold uppercase";
+                if (stepLive) stepLive.className = "p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 text-[10px] font-bold uppercase";
+                if (stepReaction) stepReaction.className = "p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 text-[10px] font-bold uppercase";
+                return;
+            }
+
+            // Rejected / Declined
+            if (row.status === 'rejected') {
+                trackerTitle.innerText = "❌ Video Declined";
+                trackerDot.className = "w-3 h-3 rounded-full bg-red-500";
+                trackerSubtext.innerText = "Broadcaster skipped or declined this video donation.";
+                if (videoStatusPollInterval) clearInterval(videoStatusPollInterval);
+            }
+        }
+
+        window.copyReceiptLink = function(btn) {
+            const receiptEl = document.getElementById('tracker-receipt-id');
+            const receiptId = receiptEl ? receiptEl.innerText.replace('#', '').trim() : (localStorage.getItem('whutcha_last_receipt_id') || '');
+            const creator = (currentProfile && currentProfile.username) || (typeof cleanHandle !== 'undefined' ? cleanHandle : 'Broadcaster');
+            const url = `${window.location.origin}${window.location.pathname}?streamer=${encodeURIComponent(creator)}&receipt=${encodeURIComponent(receiptId)}`;
+            
+            const markCopied = () => {
+                const label = document.getElementById('copy-receipt-label');
+                if (label) label.innerText = 'Copied!';
+                setTimeout(() => { if (label) label.innerText = 'Copy Link'; }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(markCopied).catch(() => {
+                    fallbackCopyText(url, markCopied);
+                });
+            } else {
+                fallbackCopyText(url, markCopied);
+            }
+        };
+
+        function fallbackCopyText(text, callback) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (callback) callback();
+            } catch(e) {
+                if (callback) callback();
+            }
+        }
+
+        window.updateVideoStatusUI = updateVideoStatusUI;
+
+        window.shareReactionTelegram = function() {
+            const creator = (currentProfile && currentProfile.username) || (typeof cleanHandle !== 'undefined' ? cleanHandle : 'Broadcaster');
+            const receiptEl = document.getElementById('tracker-receipt-id');
+            const receiptId = receiptEl ? receiptEl.innerText.replace('#', '').trim() : '';
+            const receiptUrl = `${window.location.origin}${window.location.pathname}?streamer=${encodeURIComponent(creator)}&receipt=${encodeURIComponent(receiptId)}`;
+            const text = encodeURIComponent(`Yo! @${creator} just reacted live on stream to my video donation on Whutcha! 🎬 Watch my reaction reel:`);
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(receiptUrl)}&text=${text}`, '_blank');
+        };
+
+        function subscribeToVideoDonationStatus(donationId, creatorName) {
+            const trackerReceiptId = document.getElementById('tracker-receipt-id');
+            if (trackerReceiptId) trackerReceiptId.innerText = '#' + donationId;
+
+            // SUBMARINE MODE: Persist in localStorage so the viewer never loses their video
+            try {
+                localStorage.setItem('whutcha_last_receipt_id', donationId);
+                localStorage.setItem('whutcha_receipt_streamer', creatorName);
+                window.history.replaceState({}, '', `${window.location.pathname}?streamer=${encodeURIComponent(creatorName)}&receipt=${encodeURIComponent(donationId)}`);
+            } catch(e){}
+
+            if (videoStatusChannel) supabase.removeChannel(videoStatusChannel);
+            if (videoStatusPollInterval) clearInterval(videoStatusPollInterval);
+
+            // Whutcha Sovereign Realtime Channel
+            videoStatusChannel = supabase
+                .channel('viewer-donation-' + donationId)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'donations',
+                    filter: 'id=eq.' + donationId
+                }, (payload) => {
+                    if (payload.new) {
+                        updateVideoStatusUI(payload.new, creatorName);
+                    }
+                })
+                .subscribe();
+
+            // Local BroadcastChannel Listener (Zero-latency instant cross-tab sync)
+            try {
+                const trackerBc = new BroadcastChannel('whutcha_viewer_tracker');
+                trackerBc.onmessage = (e) => {
+                    if (e.data && (e.data.donationId === donationId || !e.data.donationId)) {
+                        if (e.data.event === 'reaction_ready' || e.data.event === 'video_approved') {
+                            updateVideoStatusUI({
+                                id: donationId,
+                                status: e.data.event === 'reaction_ready' ? 'completed' : 'approved',
+                                reaction_url: e.data.reaction_url || './assets/loco-kwokka-donation.mp4?v=60'
+                            }, creatorName);
+                        }
+                    }
+                };
+            } catch(e){}
+
+            // SUBMARINE MODE: 4s Polling Fallback
+            videoStatusPollInterval = setInterval(async () => {
+                try {
+                    const { data } = await supabase
+                        .from('donations')
+                        .select('status, reaction_url')
+                        .eq('id', donationId)
+                        .maybeSingle();
+                    if (data) {
+                        updateVideoStatusUI(data, creatorName);
+                    }
+                } catch(e){}
+            }, 4000);
+        }
+
+        window.subscribeToVideoDonationStatus = subscribeToVideoDonationStatus;
+
+        window.downloadReactionReel = function() {
+            if (!currentReactionDownloadUrl) return;
+            const a = document.createElement('a');
+            a.href = currentReactionDownloadUrl;
+            const ext = currentReactionDownloadUrl.includes('.mp4') ? 'mp4' : 'webm';
+            a.download = `Whutcha_Reaction_${Date.now()}.${ext}`;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        window.shareReactionTwitter = function() {
+            const creator = (currentProfile && currentProfile.username) || (typeof cleanHandle !== 'undefined' ? cleanHandle : 'Broadcaster');
+            const receiptEl = document.getElementById('tracker-receipt-id');
+            const receiptId = receiptEl ? receiptEl.innerText.replace('#', '').trim() : '';
+            const receiptUrl = `${window.location.origin}${window.location.pathname}?streamer=${encodeURIComponent(creator)}&receipt=${encodeURIComponent(receiptId)}`;
+            const text = encodeURIComponent(`Yo! @${creator} just recorded a live video reaction to my message on @whutcha! 🎬 Watch the clip: ${receiptUrl}`);
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        };
+
+        // Auto-restore receipt from URL or localStorage
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const receiptParam = urlParams.get('receipt') || localStorage.getItem('whutcha_last_receipt_id');
+            if (receiptParam) {
+                setTimeout(() => {
+                    const statusModal = document.getElementById('video-status-modal');
+                    const streamerHandle = (currentProfile && currentProfile.username) || (typeof cleanHandle !== 'undefined' ? cleanHandle : 'Broadcaster');
+                    if (statusModal) {
+                        statusModal.classList.remove('hidden');
+                        statusModal.classList.add('flex');
+                        subscribeToVideoDonationStatus(receiptParam, streamerHandle);
+                    }
+                }, 400);
+            }
+        } catch(e){}
+
+        let viewerRoom = null;
+        async function connectCoStreamRoom(token) {
+            try {
+                viewerRoom = new LiveKitClient.Room();
+                viewerRoom.on('participantDisconnected', () => {
+                    if (!viewerRoom || viewerRoom.remoteParticipants.size === 0) {
+                        alert("[Whutcha Live Bridge 200]: Broadcaster terminated the Co-Stream session.");
+                        window.location.reload();
+                    }
+                });
+                viewerRoom.on('disconnected', () => {
+                    alert("[Whutcha Live Bridge 200]: Broadcaster terminated the Co-Stream session.");
+                    window.location.reload();
+                });
+
+                await viewerRoom.connect('wss://whutcha-drgxd8d7.livekit.cloud', token);
+                document.getElementById('costream-status-text').innerText = "YOU ARE LIVE ON BROADCAST!";
+                await viewerRoom.localParticipant.enableCameraAndMicrophone();
+                
+                viewerRoom.localParticipant.on('localTrackPublished', (publication) => {
+                    if (publication.track && publication.track.kind === 'video') {
+                        const vidEl = publication.track.attach();
+                        vidEl.className = "w-full h-full object-cover scale-x-[-1]";
+                        const container = document.getElementById('local-costream-video');
+                        container.innerHTML = '';
+                        container.appendChild(vidEl);
+                    }
+                });
+
+                viewerRoom.localParticipant.videoTrackPublications.forEach((publication) => {
+                    if (publication.track) {
+                        const vidEl = publication.track.attach();
+                        vidEl.className = "w-full h-full object-cover scale-x-[-1]";
+                        const container = document.getElementById('local-costream-video');
+                        container.innerHTML = '';
+                        container.appendChild(vidEl);
+                    }
+                });
+            } catch (err) {
+                console.error("[Whutcha Live Bridge 500]: Co-Stream connection error:", err);
+                alert("[Whutcha Live Bridge 503]: Broadcast Room Connection Error: " + err.message);
+                window.location.reload();
+            }
+        }
+
+        document.getElementById('cancel-costream-btn').addEventListener('click', () => {
+            if (approvalPollInterval) clearInterval(approvalPollInterval);
+            if (viewerRoom) {
+                if (viewerRoom.localParticipant) {
+                    viewerRoom.localParticipant.setCameraEnabled(false);
+                    viewerRoom.localParticipant.setMicrophoneEnabled(false);
+                }
+                viewerRoom.disconnect();
+            }
+            if (realtimeChannel) supabase.removeChannel(realtimeChannel);
+            window.location.reload();
+        });
+
+        // Vampire Mode: Release hardware camera & mic on tab close/unload
+        function releaseHardwareCamera() {
+            if (stream) {
+                stream.getTracks().forEach(t => t.stop());
+                stream = null;
+            }
+            if (viewerRoom) {
+                try {
+                    if (viewerRoom.localParticipant) {
+                        viewerRoom.localParticipant.setCameraEnabled(false);
+                        viewerRoom.localParticipant.setMicrophoneEnabled(false);
+                    }
+                    viewerRoom.disconnect();
+                } catch(e) {}
+            }
+        }
+        window.addEventListener('beforeunload', releaseHardwareCamera);
+        window.addEventListener('pagehide', releaseHardwareCamera);
+    </script>
+</body>
+</html>

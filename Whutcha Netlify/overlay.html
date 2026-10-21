@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.77">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    span.s1 {font: 12.0px 'Apple Color Emoji'}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Whutcha OBS Overlay&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: transparent;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100vw;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>/* Убрали flex и center, чтобы виджет мог свободно летать по краям */</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>#widget-container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 800px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(15, 23, 42, 0.95);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 2px solid #22D3EE;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 0 40px rgba(34, 211, 238, 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>/* Добавили position absolute и плавные переходы для перемещения с телефона */</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), top 0.5s ease, bottom 0.5s ease, left 0.5s ease, right 0.5s ease;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.slide-in-anim {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes slideIn {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>0% { opacity: 0; transform: scale(0.8); }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>100% { opacity: 1; transform: scale(1); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes slideOut {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>0% { opacity: 1; transform: scale(1); }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>100% { opacity: 0; transform: scale(0.8); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.slide-out-anim {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: slideOut 0.5s ease forwards !important;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>#media-container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 450px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #000;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>video {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>object-fit: contain;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="widget-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="p-4 bg-gray-900 flex justify-between items-center border-b border-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center gap-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center text-xl font-bold text-white shadow-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span id="donor-initial"&gt;?&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 id="donor-name" class="text-xl font-bold text-white tracking-wide"&gt;Viewer&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="donation-type" class="text-xs text-cyan-400 font-bold uppercase tracking-widest"&gt;Video Message&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-green-500/20 px-4 py-2 rounded-full border border-green-500/50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span id="donor-amount" class="text-2xl font-black text-green-400"&gt;+$0.00&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="media-container"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;audio id="alert-sound" src="https://www.myinstants.com/media/sounds/level-up.mp3" preload="auto"&gt;&lt;/audio&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const supabaseUrl = 'https://kjoffilncbybquvjytxx.supabase.co';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const widgetContainer = document.getElementById('widget-container');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const mediaContainer = document.getElementById('media-container');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const alertSound = document.getElementById('alert-sound');</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let currentRoom = null;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let currentScale = 1.0; // Храним текущий масштаб</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// <span class="s1">🔥</span> НОВАЯ ФУНКЦИЯ ДЛЯ УПРАВЛЕНИЯ ПОЗИЦИЕЙ С АЙФОНА</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function applyLayout(position, scale) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>currentScale = scale || 1.0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.transform = `scale(${currentScale})`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Сбрасываем координаты</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.top = 'auto';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.bottom = 'auto';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.left = 'auto';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.right = 'auto';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const pad = '40px';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (position === 'top-left') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.top = pad; widgetContainer.style.left = pad;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.transformOrigin = 'top left';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (position === 'top-right') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.top = pad; widgetContainer.style.right = pad;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.transformOrigin = 'top right';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (position === 'bottom-left') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.bottom = pad; widgetContainer.style.left = pad;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.transformOrigin = 'bottom left';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.bottom = pad; widgetContainer.style.right = pad;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.transformOrigin = 'bottom right';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showWidget(donation) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('donor-name').innerText = donation.username;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('donor-initial').innerText = donation.username.charAt(0).toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('donor-amount').innerText = `+$${donation.amount.toFixed(2)}`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const isCoStream = donation.video_hash === "costream_request";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('donation-type').innerText = isCoStream ? "Live Co-Stream" : "Video Message";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('donation-type').className = isCoStream<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>? "text-xs text-purple-400 font-bold uppercase tracking-widest"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>: "text-xs text-cyan-400 font-bold uppercase tracking-widest";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.classList.remove('slide-out-anim');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.classList.add('slide-in-anim');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.style.display = 'flex';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>alertSound.volume = 0.5;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>alertSound.play().catch(e =&gt; console.log("Sound autoplay blocked by browser"));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function hideWidget() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.classList.remove('slide-in-anim');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>widgetContainer.classList.add('slide-out-anim');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>widgetContainer.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>mediaContainer.innerHTML = '';<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (currentRoom) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>currentRoom.disconnect();</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>currentRoom = null;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, 500);<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function playVideoMessage(videoHash) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>mediaContainer.innerHTML = '';<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${videoHash}`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const videoEl = document.createElement('video');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>videoEl.src = videoUrl;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>videoEl.autoplay = true;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>videoEl.controls = false;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>videoEl.onended = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>hideWidget();<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>mediaContainer.appendChild(videoEl);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function connectCoStream(token) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>mediaContainer.innerHTML = '&lt;div class="text-white text-lg animate-pulse"&gt;Connecting to viewer...&lt;/div&gt;';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>currentRoom = new LiveKitClient.Room();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>currentRoom.on('trackSubscribed', (track, publication, participant) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (track.kind === 'video') {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>mediaContainer.innerHTML = '';<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const videoEl = track.attach();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>videoEl.className = "w-full h-full object-cover";</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>mediaContainer.appendChild(videoEl);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (track.kind === 'audio') {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>track.attach();<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>currentRoom.on('disconnected', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>hideWidget();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>await currentRoom.connect('wss://whutcha-drgxd8d7.livekit.cloud', token);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("LiveKit connection error:", error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>mediaContainer.innerHTML = '&lt;div class="text-red-500"&gt;Connection Failed&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>setTimeout(hideWidget, 3000);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function startListening() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const urlParams = new URLSearchParams(window.location.search);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const streamerId = urlParams.get('streamer') || 'default';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>console.log(`OBS Overlay started for streamer: ${streamerId}`);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// <span class="s1">🔥</span> 1. Загружаем начальную позицию из базы</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const { data: profile } = await supabase</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.from('profiles')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.select('overlay_position, overlay_scale')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.eq('id', streamerId)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.single();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (profile) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>applyLayout(profile.overlay_position || 'bottom-right', profile.overlay_scale || 1.0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// <span class="s1">🔥</span> 2. Слушаем пульт с айфона (Настройки)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>supabase.channel('obs-layout')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.on('postgres_changes', {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>event: 'UPDATE',<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>schema: 'public',<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>table: 'profiles',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>filter: `id=eq.${streamerId}`</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}, payload =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>applyLayout(payload.new.overlay_position, payload.new.overlay_scale);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>})</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.subscribe();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 3. Слушаем донаты</p>
+<p class="p1"><span class="Apple-converted-space">            </span>supabase</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.channel('obs-overlay-donations')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.on('postgres_changes', {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>event: 'UPDATE',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>schema: 'public',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>table: 'donations',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>filter: `status=eq.approved&amp;streamer_id=eq.${streamerId}`<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>}, payload =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const donation = payload.new;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log("New approved donation:", donation);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>showWidget(donation);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (donation.video_hash === "costream_request") {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if (donation.join_token) {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>connectCoStream(donation.join_token);</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>setTimeout(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>if (currentRoom) hideWidget();</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}, 60000); // Закрываем ко-стрим через минуту</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>playVideoMessage(donation.video_hash);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>})</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.subscribe();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>startListening();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>

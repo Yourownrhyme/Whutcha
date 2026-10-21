@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bg-glow" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#111726" />
+      <stop offset="60%" stop-color="#080a10" />
+      <stop offset="100%" stop-color="#040508" />
+    </radialGradient>
+
+    <!-- Neon Gradients -->
+    <linearGradient id="neon-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#70f8ff" />
+      <stop offset="50%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#0088ff" />
+    </linearGradient>
+
+    <linearGradient id="neon-magenta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4ef2" />
+      <stop offset="50%" stop-color="#c026d3" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+
+    <linearGradient id="w-metal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#e0f7fa" />
+      <stop offset="75%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#0099cc" />
+    </linearGradient>
+
+    <linearGradient id="headband-chassis" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="25%" stop-color="#1f293d" />
+      <stop offset="50%" stop-color="#2a3449" />
+      <stop offset="75%" stop-color="#1f293d" />
+      <stop offset="100%" stop-color="#c026d3" />
+    </linearGradient>
+
+    <!-- Glow Filter for Neon Accents -->
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="soft-glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base Squircle Container -->
+  <rect width="512" height="512" rx="120" fill="url(#bg-glow)" />
+  <rect width="508" height="508" x="2" y="2" rx="118" fill="none" stroke="url(#neon-cyan)" stroke-width="3" stroke-opacity="0.4" />
+
+  <!-- Background Ambient Cyber Ring -->
+  <circle cx="256" cy="275" r="170" fill="none" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="8 12" stroke-opacity="0.15" />
+  <circle cx="256" cy="275" r="140" fill="none" stroke="#c026d3" stroke-width="1.5" stroke-dasharray="6 10" stroke-opacity="0.15" />
+
+  <!-- ==================== STREAMER HEADPHONES ==================== -->
+  
+  <!-- Outer Top Headband Arc (Chassis) -->
+  <path d="M 125 240 C 125 110, 387 110, 387 240" 
+        fill="none" 
+        stroke="url(#headband-chassis)" 
+        stroke-width="20" 
+        stroke-linecap="round" />
+
+  <!-- Inner Padded Cushion Arch -->
+  <path d="M 145 230 C 145 138, 367 138, 367 230" 
+        fill="none" 
+        stroke="#0d111a" 
+        stroke-width="14" 
+        stroke-linecap="round" />
+
+  <!-- Cushion Segments / Stitching -->
+  <path d="M 175 185 C 195 155, 317 155, 337 185" 
+        fill="none" 
+        stroke="#00f0ff" 
+        stroke-width="3" 
+        stroke-dasharray="14 8" 
+        stroke-opacity="0.7" 
+        filter="url(#soft-glow)" />
+
+  <!-- Headband Adjustment Sliders -->
+  <rect x="114" y="222" width="22" height="28" rx="5" fill="#1b2234" stroke="#00f0ff" stroke-width="2" />
+  <rect x="376" y="222" width="22" height="28" rx="5" fill="#1b2234" stroke="#c026d3" stroke-width="2" />
+
+  <!-- ==================== THE CYBER 'W' (BOLD STREAMER EMBLEM) ==================== -->
+  <!-- Shadow / Outer Neon Halo for 'W' -->
+  <path d="M 138 198 L 194 366 L 256 248 L 318 366 L 374 198 L 322 198 L 290 306 L 256 230 L 222 306 L 190 198 Z"
+        fill="#00f0ff" 
+        opacity="0.35" 
+        filter="url(#neon-glow)" />
+
+  <!-- Core Heavy Letter 'W' -->
+  <path d="M 138 198 L 194 366 L 256 248 L 318 366 L 374 198 L 322 198 L 290 306 L 256 230 L 222 306 L 190 198 Z"
+        fill="url(#w-metal)" 
+        stroke="#040711" 
+        stroke-width="7" 
+        stroke-linejoin="round" />
+
+  <!-- Faceted Cyber Bevels & Highlights on 'W' -->
+  <polygon points="138,198 190,198 222,306 206,306" fill="#ffffff" opacity="0.45" />
+  <polygon points="256,230 274,264 256,248 238,264" fill="#ffffff" opacity="0.9" />
+  <polygon points="374,198 322,198 290,306 306,306" fill="#ffffff" opacity="0.45" />
+  <line x1="256" y1="230" x2="256" y2="248" stroke="#ffffff" stroke-width="3" opacity="0.8" />
+
+  <!-- ==================== OVER-EAR ACOUSTIC CUPS ==================== -->
+
+  <!-- Left Ear Cup Assembly (Cyan Glow) -->
+  <g id="left-earcup">
+    <!-- Glow Underlay -->
+    <rect x="80" y="235" width="48" height="96" rx="24" fill="#00f0ff" opacity="0.25" filter="url(#neon-glow)" />
+    <!-- Cup Outer Rim -->
+    <rect x="80" y="235" width="48" height="96" rx="24" fill="#0d111a" stroke="url(#neon-cyan)" stroke-width="4.5" />
+    <!-- Cup Inner Acoustic Cavity -->
+    <rect x="90" y="247" width="28" height="72" rx="14" fill="#06080e" stroke="#00f0ff" stroke-width="2" stroke-opacity="0.8" />
+    <!-- Glowing LED Accent Ring -->
+    <ellipse cx="104" cy="283" rx="8" ry="20" fill="none" stroke="#00f0ff" stroke-width="2.5" filter="url(#soft-glow)" />
+    <!-- Pivot Hinge -->
+    <circle cx="104" cy="240" r="5" fill="#00f0ff" />
+  </g>
+
+  <!-- Right Ear Cup Assembly (Magenta Glow) -->
+  <g id="right-earcup">
+    <!-- Glow Underlay -->
+    <rect x="384" y="235" width="48" height="96" rx="24" fill="#c026d3" opacity="0.25" filter="url(#neon-glow)" />
+    <!-- Cup Outer Rim -->
+    <rect x="384" y="235" width="48" height="96" rx="24" fill="#0d111a" stroke="url(#neon-magenta)" stroke-width="4.5" />
+    <!-- Cup Inner Acoustic Cavity -->
+    <rect x="394" y="247" width="28" height="72" rx="14" fill="#06080e" stroke="#c026d3" stroke-width="2" stroke-opacity="0.8" />
+    <!-- Glowing LED Accent Ring -->
+    <ellipse cx="408" cy="283" rx="8" ry="20" fill="none" stroke="#ff4ef2" stroke-width="2.5" filter="url(#soft-glow)" />
+    <!-- Pivot Hinge -->
+    <circle cx="408" cy="240" r="5" fill="#c026d3" />
+  </g>
+
+  <!-- ==================== STREAMER BOOM MICROPHONE ==================== -->
+  <!-- Flexible Gooseneck Arm curving from Left Cup towards center -->
+  <path d="M 104 315 C 95 385, 175 420, 224 402" 
+        fill="none" 
+        stroke="#1a2233" 
+        stroke-width="7" 
+        stroke-linecap="round" />
+  
+  <path d="M 104 315 C 95 385, 175 420, 224 402" 
+        fill="none" 
+        stroke="#00f0ff" 
+        stroke-width="2.5" 
+        stroke-linecap="round" 
+        stroke-opacity="0.7" 
+        filter="url(#soft-glow)" />
+
+  <!-- Microphone Capsule Head -->
+  <rect x="220" y="388" width="30" height="18" rx="9" fill="#0d111a" stroke="#00f0ff" stroke-width="2.5" transform="rotate(-18 235 397)" />
+  <!-- Capsule Grill Mesh Lines -->
+  <line x1="228" y1="391" x2="228" y2="403" stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.8" transform="rotate(-18 235 397)" />
+  <line x1="234" y1="390" x2="234" y2="404" stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.8" transform="rotate(-18 235 397)" />
+
+  <!-- ON-AIR Live Tally Diode at Mic Tip -->
+  <circle cx="249" cy="393" r="4.5" fill="#00f0ff" filter="url(#neon-glow)" />
+  <circle cx="249" cy="393" r="2" fill="#ffffff" />
+</svg>

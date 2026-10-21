@@ -1,0 +1,825 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		040474CD304BC2A500C31036 /* CardPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474CC304BC2A500C31036 /* CardPlayerModel.swift */; };
+		040474CE304BC2A500C31036 /* CardPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474CC304BC2A500C31036 /* CardPlayerModel.swift */; };
+		040474CF304BC2A500C31036 /* CardPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474CC304BC2A500C31036 /* CardPlayerModel.swift */; };
+		040474D1304CED6800C31036 /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D0304CED6800C31036 /* OverlayManager.swift */; };
+		040474D2304CED6800C31036 /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D0304CED6800C31036 /* OverlayManager.swift */; };
+		040474D3304CED6800C31036 /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D0304CED6800C31036 /* OverlayManager.swift */; };
+		040474D5304CED9500C31036 /* OBSControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D4304CED9500C31036 /* OBSControlView.swift */; };
+		040474D6304CED9500C31036 /* OBSControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D4304CED9500C31036 /* OBSControlView.swift */; };
+		040474D7304CED9500C31036 /* OBSControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040474D4304CED9500C31036 /* OBSControlView.swift */; };
+		04496EE7301D6A75008E6208 /* WhutchaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496EE6301D6A75008E6208 /* WhutchaApp.swift */; };
+		04496EE9301D6A75008E6208 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496EE8301D6A75008E6208 /* ContentView.swift */; };
+		04496EEB301D6A77008E6208 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04496EEA301D6A77008E6208 /* Assets.xcassets */; };
+		04496EEE301D6A77008E6208 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04496EED301D6A77008E6208 /* Preview Assets.xcassets */; };
+		04496EF8301D6A77008E6208 /* WhutchaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496EF7301D6A77008E6208 /* WhutchaTests.swift */; };
+		04496F02301D6A77008E6208 /* WhutchaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F01301D6A77008E6208 /* WhutchaUITests.swift */; };
+		04496F04301D6A77008E6208 /* WhutchaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F03301D6A77008E6208 /* WhutchaUITestsLaunchTests.swift */; };
+		04496F11301D6B25008E6208 /* Donation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F10301D6B25008E6208 /* Donation.swift */; };
+		04496F13301D6B61008E6208 /* QueueViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F12301D6B61008E6208 /* QueueViewModel.swift */; };
+		04496F15301D6BBF008E6208 /* DonationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F14301D6BBF008E6208 /* DonationCardView.swift */; };
+		04496F17301D6C7E008E6208 /* IOSVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F16301D6C7E008E6208 /* IOSVideoPlayer.swift */; };
+		04496F3F30253FD6008E6208 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F3E30253FD6008E6208 /* LiveManager.swift */; };
+		04496F4130254005008E6208 /* CoStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F4030254005008E6208 /* CoStreamView.swift */; };
+		04496F44302543B8008E6208 /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 04496F43302543B8008E6208 /* LiveKit */; };
+		04496F463027F4B5008E6208 /* WhutchaStore.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 04496F453027F4B5008E6208 /* WhutchaStore.storekit */; };
+		04496F473027F4B5008E6208 /* WhutchaStore.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 04496F453027F4B5008E6208 /* WhutchaStore.storekit */; };
+		04496F4C3027F66C008E6208 /* WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F4B3027F66C008E6208 /* WalletView.swift */; };
+		04496F4D3027F66C008E6208 /* WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F4B3027F66C008E6208 /* WalletView.swift */; };
+		04496F4F3027F772008E6208 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F4E3027F772008E6208 /* SwiftUIView.swift */; };
+		04496F503027F772008E6208 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F4E3027F772008E6208 /* SwiftUIView.swift */; };
+		04496F52302A8F75008E6208 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F51302A8F75008E6208 /* AppConstants.swift */; };
+		04496F53302A8F75008E6208 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04496F51302A8F75008E6208 /* AppConstants.swift */; };
+		04496F58302A9BB8008E6208 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 04496F57302A9BB8008E6208 /* index.html */; };
+		04496F59302A9BB8008E6208 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 04496F57302A9BB8008E6208 /* index.html */; };
+		0495091A3043D55D0071A435 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049509193043D55D0071A435 /* AuthManager.swift */; };
+		0495091B3043D55D0071A435 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049509193043D55D0071A435 /* AuthManager.swift */; };
+		0495091C3043D55D0071A435 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049509193043D55D0071A435 /* AuthManager.swift */; };
+		0495091E3043D58B0071A435 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0495091D3043D58B0071A435 /* SplashView.swift */; };
+		0495091F3043D58B0071A435 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0495091D3043D58B0071A435 /* SplashView.swift */; };
+		049509203043D58B0071A435 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0495091D3043D58B0071A435 /* SplashView.swift */; };
+		04A22A32304CFA8700C1F541 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A31304CFA8700C1F541 /* OnboardingView.swift */; };
+		04A22A33304CFA8700C1F541 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A31304CFA8700C1F541 /* OnboardingView.swift */; };
+		04A22A34304CFA8700C1F541 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A31304CFA8700C1F541 /* OnboardingView.swift */; };
+		04A22A40304CFFB600C1F541 /* ReactionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A3F304CFFB600C1F541 /* ReactionManager.swift */; };
+		04A22A41304CFFB600C1F541 /* ReactionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A3F304CFFB600C1F541 /* ReactionManager.swift */; };
+		04A22A42304CFFB600C1F541 /* ReactionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A3F304CFFB600C1F541 /* ReactionManager.swift */; };
+		04A22A44304CFFE700C1F541 /* ReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A43304CFFE700C1F541 /* ReactionView.swift */; };
+		04A22A45304CFFE700C1F541 /* ReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A43304CFFE700C1F541 /* ReactionView.swift */; };
+		04A22A46304CFFE700C1F541 /* ReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A22A43304CFFE700C1F541 /* ReactionView.swift */; };
+		04A6B076304D273F0039274D /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B075304D273F0039274D /* Auth */; };
+		04A6B078304D273F0039274D /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B077304D273F0039274D /* Functions */; };
+		04A6B07A304D273F0039274D /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B079304D273F0039274D /* PostgREST */; };
+		04A6B07C304D273F0039274D /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B07B304D273F0039274D /* Realtime */; };
+		04A6B07E304D273F0039274D /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B07D304D273F0039274D /* Storage */; };
+		04A6B080304D28890039274D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 04A6B07F304D28890039274D /* Supabase */; };
+		04B485B4304F73570023EFCA /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B3304F73570023EFCA /* SubscriptionManager.swift */; };
+		04B485B5304F73570023EFCA /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B3304F73570023EFCA /* SubscriptionManager.swift */; };
+		04B485B6304F73570023EFCA /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B3304F73570023EFCA /* SubscriptionManager.swift */; };
+		04B485B8304F737F0023EFCA /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B7304F737F0023EFCA /* PaywallView.swift */; };
+		04B485B9304F737F0023EFCA /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B7304F737F0023EFCA /* PaywallView.swift */; };
+		04B485BA304F737F0023EFCA /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B485B7304F737F0023EFCA /* PaywallView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		04496EF4301D6A77008E6208 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04496EDB301D6A75008E6208 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04496EE2301D6A75008E6208;
+			remoteInfo = Whutcha;
+		};
+		04496EFE301D6A77008E6208 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04496EDB301D6A75008E6208 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04496EE2301D6A75008E6208;
+			remoteInfo = Whutcha;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		040474CC304BC2A500C31036 /* CardPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPlayerModel.swift; sourceTree = "<group>"; };
+		040474D0304CED6800C31036 /* OverlayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayManager.swift; sourceTree = "<group>"; };
+		040474D4304CED9500C31036 /* OBSControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBSControlView.swift; sourceTree = "<group>"; };
+		04496EE3301D6A75008E6208 /* Whutcha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Whutcha.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		04496EE6301D6A75008E6208 /* WhutchaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhutchaApp.swift; sourceTree = "<group>"; };
+		04496EE8301D6A75008E6208 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		04496EEA301D6A77008E6208 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		04496EED301D6A77008E6208 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		04496EF3301D6A77008E6208 /* WhutchaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhutchaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		04496EF7301D6A77008E6208 /* WhutchaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhutchaTests.swift; sourceTree = "<group>"; };
+		04496EFD301D6A77008E6208 /* WhutchaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhutchaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		04496F01301D6A77008E6208 /* WhutchaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhutchaUITests.swift; sourceTree = "<group>"; };
+		04496F03301D6A77008E6208 /* WhutchaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhutchaUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		04496F10301D6B25008E6208 /* Donation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Donation.swift; sourceTree = "<group>"; };
+		04496F12301D6B61008E6208 /* QueueViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueViewModel.swift; sourceTree = "<group>"; };
+		04496F14301D6BBF008E6208 /* DonationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationCardView.swift; sourceTree = "<group>"; };
+		04496F16301D6C7E008E6208 /* IOSVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSVideoPlayer.swift; sourceTree = "<group>"; };
+		04496F3E30253FD6008E6208 /* LiveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
+		04496F4030254005008E6208 /* CoStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoStreamView.swift; sourceTree = "<group>"; };
+		04496F453027F4B5008E6208 /* WhutchaStore.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = WhutchaStore.storekit; sourceTree = "<group>"; };
+		04496F4B3027F66C008E6208 /* WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletView.swift; sourceTree = "<group>"; };
+		04496F4E3027F772008E6208 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
+		04496F51302A8F75008E6208 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		04496F57302A9BB8008E6208 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		046F2EAD3031F3B50043C5D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		049509173043CD620071A435 /* index.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; name = index.ts; path = "supabase/functions/verify-purchase/index.ts"; sourceTree = SOURCE_ROOT; };
+		049509193043D55D0071A435 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		0495091D3043D58B0071A435 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		04A22A31304CFA8700C1F541 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		04A22A3F304CFFB600C1F541 /* ReactionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionManager.swift; sourceTree = "<group>"; };
+		04A22A43304CFFE700C1F541 /* ReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionView.swift; sourceTree = "<group>"; };
+		04B485B3304F73570023EFCA /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		04B485B7304F737F0023EFCA /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		04496EE0301D6A75008E6208 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04A6B080304D28890039274D /* Supabase in Frameworks */,
+				04A6B07E304D273F0039274D /* Storage in Frameworks */,
+				04A6B07A304D273F0039274D /* PostgREST in Frameworks */,
+				04A6B078304D273F0039274D /* Functions in Frameworks */,
+				04A6B076304D273F0039274D /* Auth in Frameworks */,
+				04A6B07C304D273F0039274D /* Realtime in Frameworks */,
+				04496F44302543B8008E6208 /* LiveKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EF0301D6A77008E6208 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EFA301D6A77008E6208 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04496EDA301D6A75008E6208 = {
+			isa = PBXGroup;
+			children = (
+				04B485B7304F737F0023EFCA /* PaywallView.swift */,
+				04B485B3304F73570023EFCA /* SubscriptionManager.swift */,
+				04A22A43304CFFE700C1F541 /* ReactionView.swift */,
+				04A22A3F304CFFB600C1F541 /* ReactionManager.swift */,
+				04A22A31304CFA8700C1F541 /* OnboardingView.swift */,
+				040474D4304CED9500C31036 /* OBSControlView.swift */,
+				040474D0304CED6800C31036 /* OverlayManager.swift */,
+				040474CC304BC2A500C31036 /* CardPlayerModel.swift */,
+				0495091D3043D58B0071A435 /* SplashView.swift */,
+				049509193043D55D0071A435 /* AuthManager.swift */,
+				04496F51302A8F75008E6208 /* AppConstants.swift */,
+				04496F4B3027F66C008E6208 /* WalletView.swift */,
+				04496F4E3027F772008E6208 /* SwiftUIView.swift */,
+				04496F453027F4B5008E6208 /* WhutchaStore.storekit */,
+				04496F4030254005008E6208 /* CoStreamView.swift */,
+				04496F3E30253FD6008E6208 /* LiveManager.swift */,
+				04496F16301D6C7E008E6208 /* IOSVideoPlayer.swift */,
+				04496F14301D6BBF008E6208 /* DonationCardView.swift */,
+				04496EE5301D6A75008E6208 /* Whutcha */,
+				04496EF6301D6A77008E6208 /* WhutchaTests */,
+				04496F00301D6A77008E6208 /* WhutchaUITests */,
+				04496EE4301D6A75008E6208 /* Products */,
+				04A22A47304D0FA300C1F541 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		04496EE4301D6A75008E6208 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04496EE3301D6A75008E6208 /* Whutcha.app */,
+				04496EF3301D6A77008E6208 /* WhutchaTests.xctest */,
+				04496EFD301D6A77008E6208 /* WhutchaUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		04496EE5301D6A75008E6208 /* Whutcha */ = {
+			isa = PBXGroup;
+			children = (
+				046F2EAD3031F3B50043C5D5 /* Info.plist */,
+				04496EE6301D6A75008E6208 /* WhutchaApp.swift */,
+				04496EE8301D6A75008E6208 /* ContentView.swift */,
+				04496EEA301D6A77008E6208 /* Assets.xcassets */,
+				04496EEC301D6A77008E6208 /* Preview Content */,
+				04496F10301D6B25008E6208 /* Donation.swift */,
+				04496F12301D6B61008E6208 /* QueueViewModel.swift */,
+				04496F57302A9BB8008E6208 /* index.html */,
+			);
+			path = Whutcha;
+			sourceTree = "<group>";
+		};
+		04496EEC301D6A77008E6208 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				04496EED301D6A77008E6208 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		04496EF6301D6A77008E6208 /* WhutchaTests */ = {
+			isa = PBXGroup;
+			children = (
+				049509173043CD620071A435 /* index.ts */,
+				04496EF7301D6A77008E6208 /* WhutchaTests.swift */,
+			);
+			path = WhutchaTests;
+			sourceTree = "<group>";
+		};
+		04496F00301D6A77008E6208 /* WhutchaUITests */ = {
+			isa = PBXGroup;
+			children = (
+				04496F01301D6A77008E6208 /* WhutchaUITests.swift */,
+				04496F03301D6A77008E6208 /* WhutchaUITestsLaunchTests.swift */,
+			);
+			path = WhutchaUITests;
+			sourceTree = "<group>";
+		};
+		04A22A47304D0FA300C1F541 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		04496EE2301D6A75008E6208 /* Whutcha */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04496F07301D6A77008E6208 /* Build configuration list for PBXNativeTarget "Whutcha" */;
+			buildPhases = (
+				04496EDF301D6A75008E6208 /* Sources */,
+				04496EE0301D6A75008E6208 /* Frameworks */,
+				04496EE1301D6A75008E6208 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Whutcha;
+			packageProductDependencies = (
+				04496F43302543B8008E6208 /* LiveKit */,
+				04A6B075304D273F0039274D /* Auth */,
+				04A6B077304D273F0039274D /* Functions */,
+				04A6B079304D273F0039274D /* PostgREST */,
+				04A6B07B304D273F0039274D /* Realtime */,
+				04A6B07D304D273F0039274D /* Storage */,
+				04A6B07F304D28890039274D /* Supabase */,
+			);
+			productName = Whutcha;
+			productReference = 04496EE3301D6A75008E6208 /* Whutcha.app */;
+			productType = "com.apple.product-type.application";
+		};
+		04496EF2301D6A77008E6208 /* WhutchaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04496F0A301D6A77008E6208 /* Build configuration list for PBXNativeTarget "WhutchaTests" */;
+			buildPhases = (
+				04496EEF301D6A77008E6208 /* Sources */,
+				04496EF0301D6A77008E6208 /* Frameworks */,
+				04496EF1301D6A77008E6208 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04496EF5301D6A77008E6208 /* PBXTargetDependency */,
+			);
+			name = WhutchaTests;
+			productName = WhutchaTests;
+			productReference = 04496EF3301D6A77008E6208 /* WhutchaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		04496EFC301D6A77008E6208 /* WhutchaUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04496F0D301D6A77008E6208 /* Build configuration list for PBXNativeTarget "WhutchaUITests" */;
+			buildPhases = (
+				04496EF9301D6A77008E6208 /* Sources */,
+				04496EFA301D6A77008E6208 /* Frameworks */,
+				04496EFB301D6A77008E6208 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04496EFF301D6A77008E6208 /* PBXTargetDependency */,
+			);
+			name = WhutchaUITests;
+			productName = WhutchaUITests;
+			productReference = 04496EFD301D6A77008E6208 /* WhutchaUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		04496EDB301D6A75008E6208 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					04496EE2301D6A75008E6208 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					04496EF2301D6A77008E6208 = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 04496EE2301D6A75008E6208;
+					};
+					04496EFC301D6A77008E6208 = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 04496EE2301D6A75008E6208;
+					};
+				};
+			};
+			buildConfigurationList = 04496EDE301D6A75008E6208 /* Build configuration list for PBXProject "Whutcha" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 04496EDA301D6A75008E6208;
+			packageReferences = (
+				04496F42302543B8008E6208 /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
+				04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			productRefGroup = 04496EE4301D6A75008E6208 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				04496EE2301D6A75008E6208 /* Whutcha */,
+				04496EF2301D6A77008E6208 /* WhutchaTests */,
+				04496EFC301D6A77008E6208 /* WhutchaUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		04496EE1301D6A75008E6208 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04496F463027F4B5008E6208 /* WhutchaStore.storekit in Resources */,
+				04496F58302A9BB8008E6208 /* index.html in Resources */,
+				04496EEE301D6A77008E6208 /* Preview Assets.xcassets in Resources */,
+				04496EEB301D6A77008E6208 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EF1301D6A77008E6208 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04496F473027F4B5008E6208 /* WhutchaStore.storekit in Resources */,
+				04496F59302A9BB8008E6208 /* index.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EFB301D6A77008E6208 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04496EDF301D6A75008E6208 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04496F3F30253FD6008E6208 /* LiveManager.swift in Sources */,
+				04496F4C3027F66C008E6208 /* WalletView.swift in Sources */,
+				04496F4F3027F772008E6208 /* SwiftUIView.swift in Sources */,
+				040474D5304CED9500C31036 /* OBSControlView.swift in Sources */,
+				04A22A44304CFFE700C1F541 /* ReactionView.swift in Sources */,
+				04B485B8304F737F0023EFCA /* PaywallView.swift in Sources */,
+				0495091A3043D55D0071A435 /* AuthManager.swift in Sources */,
+				04496F17301D6C7E008E6208 /* IOSVideoPlayer.swift in Sources */,
+				04496F13301D6B61008E6208 /* QueueViewModel.swift in Sources */,
+				04496F11301D6B25008E6208 /* Donation.swift in Sources */,
+				040474CD304BC2A500C31036 /* CardPlayerModel.swift in Sources */,
+				04496EE9301D6A75008E6208 /* ContentView.swift in Sources */,
+				04A22A32304CFA8700C1F541 /* OnboardingView.swift in Sources */,
+				04496F52302A8F75008E6208 /* AppConstants.swift in Sources */,
+				04496F15301D6BBF008E6208 /* DonationCardView.swift in Sources */,
+				040474D1304CED6800C31036 /* OverlayManager.swift in Sources */,
+				04496F4130254005008E6208 /* CoStreamView.swift in Sources */,
+				04A22A40304CFFB600C1F541 /* ReactionManager.swift in Sources */,
+				04B485B4304F73570023EFCA /* SubscriptionManager.swift in Sources */,
+				04496EE7301D6A75008E6208 /* WhutchaApp.swift in Sources */,
+				0495091E3043D58B0071A435 /* SplashView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EEF301D6A77008E6208 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04496EF8301D6A77008E6208 /* WhutchaTests.swift in Sources */,
+				0495091B3043D55D0071A435 /* AuthManager.swift in Sources */,
+				040474D6304CED9500C31036 /* OBSControlView.swift in Sources */,
+				04A22A41304CFFB600C1F541 /* ReactionManager.swift in Sources */,
+				040474D2304CED6800C31036 /* OverlayManager.swift in Sources */,
+				04496F503027F772008E6208 /* SwiftUIView.swift in Sources */,
+				04B485B9304F737F0023EFCA /* PaywallView.swift in Sources */,
+				04496F4D3027F66C008E6208 /* WalletView.swift in Sources */,
+				040474CE304BC2A500C31036 /* CardPlayerModel.swift in Sources */,
+				04A22A33304CFA8700C1F541 /* OnboardingView.swift in Sources */,
+				04B485B5304F73570023EFCA /* SubscriptionManager.swift in Sources */,
+				04A22A45304CFFE700C1F541 /* ReactionView.swift in Sources */,
+				04496F53302A8F75008E6208 /* AppConstants.swift in Sources */,
+				0495091F3043D58B0071A435 /* SplashView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04496EF9301D6A77008E6208 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04B485BA304F737F0023EFCA /* PaywallView.swift in Sources */,
+				040474CF304BC2A500C31036 /* CardPlayerModel.swift in Sources */,
+				04496F02301D6A77008E6208 /* WhutchaUITests.swift in Sources */,
+				049509203043D58B0071A435 /* SplashView.swift in Sources */,
+				04A22A34304CFA8700C1F541 /* OnboardingView.swift in Sources */,
+				0495091C3043D55D0071A435 /* AuthManager.swift in Sources */,
+				04496F04301D6A77008E6208 /* WhutchaUITestsLaunchTests.swift in Sources */,
+				04A22A46304CFFE700C1F541 /* ReactionView.swift in Sources */,
+				04A22A42304CFFB600C1F541 /* ReactionManager.swift in Sources */,
+				04B485B6304F73570023EFCA /* SubscriptionManager.swift in Sources */,
+				040474D3304CED6800C31036 /* OverlayManager.swift in Sources */,
+				040474D7304CED9500C31036 /* OBSControlView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04496EF5301D6A77008E6208 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04496EE2301D6A75008E6208 /* Whutcha */;
+			targetProxy = 04496EF4301D6A77008E6208 /* PBXContainerItemProxy */;
+		};
+		04496EFF301D6A77008E6208 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04496EE2301D6A75008E6208 /* Whutcha */;
+			targetProxy = 04496EFE301D6A77008E6208 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		04496F05301D6A77008E6208 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		04496F06301D6A77008E6208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		04496F08301D6A77008E6208 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Whutcha/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Whutcha/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera for live stream and video reactions";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need mic for live stream and video reactions";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used to save reaction videos to your gallery";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.Whutcha;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		04496F09301D6A77008E6208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Whutcha/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Whutcha/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera for live stream and video reactions";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need mic for live stream and video reactions";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used to save reaction videos to your gallery";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.Whutcha;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		04496F0B301D6A77008E6208 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.WhutchaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Whutcha.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Whutcha";
+			};
+			name = Debug;
+		};
+		04496F0C301D6A77008E6208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.WhutchaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Whutcha.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Whutcha";
+			};
+			name = Release;
+		};
+		04496F0E301D6A77008E6208 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.WhutchaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Whutcha;
+			};
+			name = Debug;
+		};
+		04496F0F301D6A77008E6208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.WhutchaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Whutcha;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04496EDE301D6A75008E6208 /* Build configuration list for PBXProject "Whutcha" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04496F05301D6A77008E6208 /* Debug */,
+				04496F06301D6A77008E6208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04496F07301D6A77008E6208 /* Build configuration list for PBXNativeTarget "Whutcha" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04496F08301D6A77008E6208 /* Debug */,
+				04496F09301D6A77008E6208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04496F0A301D6A77008E6208 /* Build configuration list for PBXNativeTarget "WhutchaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04496F0B301D6A77008E6208 /* Debug */,
+				04496F0C301D6A77008E6208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04496F0D301D6A77008E6208 /* Build configuration list for PBXNativeTarget "WhutchaUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04496F0E301D6A77008E6208 /* Debug */,
+				04496F0F301D6A77008E6208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		04496F42302543B8008E6208 /* XCRemoteSwiftPackageReference "client-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/livekit/client-sdk-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.11;
+			};
+		};
+		04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		04496F43302543B8008E6208 /* LiveKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04496F42302543B8008E6208 /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
+			productName = LiveKit;
+		};
+		04A6B075304D273F0039274D /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		04A6B077304D273F0039274D /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		04A6B079304D273F0039274D /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		04A6B07B304D273F0039274D /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		04A6B07D304D273F0039274D /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		04A6B07F304D28890039274D /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A6B074304D273F0039274D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 04496EDB301D6A75008E6208 /* Project object */;
+}

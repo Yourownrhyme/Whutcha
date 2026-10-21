@@ -1,0 +1,241 @@
+{\rtf1\ansi\ansicpg1251\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>Whutcha - OBS Overlay</title>\
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">\
+    <style>\
+        /* \uc0\u1057 \u1073 \u1088 \u1086 \u1089  \u1080  \u1087 \u1088 \u1086 \u1079 \u1088 \u1072 \u1095 \u1085 \u1099 \u1081  \u1092 \u1086 \u1085  \u1076 \u1083 \u1103  OBS */\
+        * \{ box-sizing: border-box; margin: 0; padding: 0; \}\
+        body \{\
+            background-color: transparent !important; /* \uc0\u1042 \u1072 \u1078 \u1085 \u1086  \u1076 \u1083 \u1103  OBS! */\
+            font-family: 'Outfit', sans-serif;\
+            overflow: hidden; /* \uc0\u1063 \u1090 \u1086 \u1073 \u1099  \u1089 \u1082 \u1088 \u1086 \u1083 \u1083 \u1073 \u1072 \u1088 \u1099  \u1085 \u1077  \u1074 \u1099 \u1083 \u1077 \u1079 \u1072 \u1083 \u1080  */\
+            width: 100vw;\
+            height: 100vh;\
+            position: relative;\
+        \}\
+\
+        /* \uc0\u1043 \u1083 \u1072 \u1074 \u1085 \u1099 \u1081  \u1082 \u1086 \u1085 \u1090 \u1077 \u1081 \u1085 \u1077 \u1088  \u1074 \u1080 \u1076 \u1078 \u1077 \u1090 \u1072 . \u1054 \u1085  \u1073 \u1091 \u1076 \u1077 \u1090  \u1076 \u1074 \u1080 \u1075 \u1072 \u1090 \u1100 \u1089 \u1103  \u1080  \u1084 \u1072 \u1089 \u1096 \u1090 \u1072 \u1073 \u1080 \u1088 \u1086 \u1074 \u1072 \u1090 \u1100 \u1089 \u1103  */\
+        #widget-container \{\
+            position: absolute;\
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* \uc0\u1055 \u1083 \u1072 \u1074 \u1085 \u1072 \u1103  \u1087 \u1088 \u1091 \u1078 \u1080 \u1085 \u1080 \u1089 \u1090 \u1072 \u1103  \u1072 \u1085 \u1080 \u1084 \u1072 \u1094 \u1080 \u1103  */\
+            display: flex;\
+            flex-direction: column;\
+            gap: 16px;\
+        \}\
+\
+        /* \uc0\u1057 \u1090 \u1080 \u1083 \u1100  \u1089 \u1072 \u1084 \u1086 \u1081  \u1082 \u1072 \u1088 \u1090 \u1086 \u1095 \u1082 \u1080  \u1076 \u1086 \u1085 \u1072 \u1090 \u1072  (\u1089 \u1082 \u1088 \u1099 \u1090 \u1072  \u1087 \u1086  \u1091 \u1084 \u1086 \u1083 \u1095 \u1072 \u1085 \u1080 \u1102 ) */\
+        .donation-alert \{\
+            background: rgba(10, 10, 15, 0.85);\
+            backdrop-filter: blur(16px);\
+            border: 1px solid rgba(0, 229, 255, 0.3);\
+            border-radius: 20px;\
+            padding: 20px;\
+            width: 320px;\
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);\
+            opacity: 0;\
+            transform: translateY(20px) scale(0.9);\
+            transition: all 0.4s ease-out;\
+        \}\
+\
+        /* \uc0\u1050 \u1083 \u1072 \u1089 \u1089  \u1076 \u1083 \u1103  \u1072 \u1085 \u1080 \u1084 \u1072 \u1094 \u1080 \u1080  \u1087 \u1086 \u1103 \u1074 \u1083 \u1077 \u1085 \u1080 \u1103  */\
+        .donation-alert.show \{\
+            opacity: 1;\
+            transform: translateY(0) scale(1);\
+        \}\
+\
+        .alert-header \{\
+            display: flex;\
+            align-items: center;\
+            justify-content: space-between;\
+            margin-bottom: 12px;\
+        \}\
+\
+        .username \{\
+            font-size: 20px;\
+            font-weight: 900;\
+            color: #fff;\
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);\
+        \}\
+\
+        .amount \{\
+            font-size: 24px;\
+            font-weight: 900;\
+            color: #00E5FF;\
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);\
+        \}\
+\
+        .video-container \{\
+            width: 100%;\
+            height: 160px;\
+            background: #000;\
+            border-radius: 12px;\
+            overflow: hidden;\
+            border: 1px solid rgba(255,255,255,0.1);\
+        \}\
+\
+        video \{ width: 100%; height: 100%; object-fit: cover; \}\
+    </style>\
+</head>\
+<body>\
+\
+    <!-- \uc0\u1050 \u1086 \u1085 \u1090 \u1077 \u1081 \u1085 \u1077 \u1088 , \u1082 \u1086 \u1090 \u1086 \u1088 \u1099 \u1084  \u1084 \u1099  \u1091 \u1087 \u1088 \u1072 \u1074 \u1083 \u1103 \u1077 \u1084  \u1089  \u1090 \u1077 \u1083 \u1077 \u1092 \u1086 \u1085 \u1072  -->\
+    <div id="widget-container" style="bottom: 40px; right: 40px; transform: scale(1); transform-origin: bottom right;">\
+        <!-- \uc0\u1047 \u1076 \u1077 \u1089 \u1100  \u1073 \u1091 \u1076 \u1091 \u1090  \u1087 \u1086 \u1103 \u1074 \u1083 \u1103 \u1090 \u1100 \u1089 \u1103  \u1072 \u1083 \u1083 \u1077 \u1088 \u1090 \u1099  \u1076 \u1086 \u1085 \u1072 \u1090 \u1086 \u1074  -->\
+    </div>\
+\
+    <script>\
+        document.addEventListener("DOMContentLoaded", async () => \{\
+            const urlParams = new URLSearchParams(window.location.search);\
+            const streamerId = urlParams.get('streamer') || 'default';\
+            const widgetContainer = document.getElementById('widget-container');\
+\
+            // \uc0\u1055 \u1086 \u1076 \u1082 \u1083 \u1102 \u1095 \u1072 \u1077 \u1084  Supabase\
+            const supabaseUrl = 'https://kjoffilncbybquvjytxx.supabase.co';\
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';\
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);\
+\
+            // 1. \uc0\u1060 \u1059 \u1053 \u1050 \u1062 \u1048 \u1071  \u1055 \u1056 \u1048 \u1052 \u1045 \u1053 \u1045 \u1053 \u1048 \u1071  \u1053 \u1040 \u1057 \u1058 \u1056 \u1054 \u1045 \u1050  (\u1055 \u1054 \u1047 \u1048 \u1062 \u1048 \u1071  \u1048  \u1056 \u1040 \u1047 \u1052 \u1045 \u1056 )\
+            function applyLayout(position, scale) \{\
+                // \uc0\u1055 \u1088 \u1080 \u1084 \u1077 \u1085 \u1103 \u1077 \u1084  \u1088 \u1072 \u1079 \u1084 \u1077 \u1088 \
+                widgetContainer.style.transform = `scale($\{scale\})`;\
+                \
+                // \uc0\u1057 \u1073 \u1088 \u1072 \u1089 \u1099 \u1074 \u1072 \u1077 \u1084  \u1089 \u1090 \u1072 \u1088 \u1099 \u1077  \u1082 \u1086 \u1086 \u1088 \u1076 \u1080 \u1085 \u1072 \u1090 \u1099 \
+                widgetContainer.style.top = 'auto';\
+                widgetContainer.style.bottom = 'auto';\
+                widgetContainer.style.left = 'auto';\
+                widgetContainer.style.right = 'auto';\
+\
+                const pad = '40px'; // \uc0\u1054 \u1090 \u1089 \u1090 \u1091 \u1087  \u1086 \u1090  \u1082 \u1088 \u1072 \u1077 \u1074  \u1101 \u1082 \u1088 \u1072 \u1085 \u1072 \
+\
+                // \uc0\u1055 \u1088 \u1080 \u1084 \u1077 \u1085 \u1103 \u1077 \u1084  \u1085 \u1086 \u1074 \u1099 \u1077  \u1082 \u1086 \u1086 \u1088 \u1076 \u1080 \u1085 \u1072 \u1090 \u1099  \u1080  \u1090 \u1086 \u1095 \u1082 \u1091  \u1090 \u1088 \u1072 \u1085 \u1089 \u1092 \u1086 \u1088 \u1084 \u1072 \u1094 \u1080 \u1080  (\u1095 \u1090 \u1086 \u1073 \u1099  \u1084 \u1072 \u1089 \u1096 \u1090 \u1072 \u1073 \u1080 \u1088 \u1086 \u1074 \u1072 \u1083 \u1086 \u1089 \u1100  \u1074  \u1091 \u1075 \u1086 \u1083 , \u1072  \u1085 \u1077  \u1074  \u1094 \u1077 \u1085 \u1090 \u1088 )\
+                if (position === 'top-left') \{\
+                    widgetContainer.style.top = pad; widgetContainer.style.left = pad;\
+                    widgetContainer.style.transformOrigin = 'top left';\
+                \} else if (position === 'top-right') \{\
+                    widgetContainer.style.top = pad; widgetContainer.style.right = pad;\
+                    widgetContainer.style.transformOrigin = 'top right';\
+                \} else if (position === 'bottom-left') \{\
+                    widgetContainer.style.bottom = pad; widgetContainer.style.left = pad;\
+                    widgetContainer.style.transformOrigin = 'bottom left';\
+                \} else \{\
+                    // bottom-right \uc0\u1087 \u1086  \u1091 \u1084 \u1086 \u1083 \u1095 \u1072 \u1085 \u1080 \u1102 \
+                    widgetContainer.style.bottom = pad; widgetContainer.style.right = pad;\
+                    widgetContainer.style.transformOrigin = 'bottom right';\
+                \}\
+            \}\
+\
+            // 2. \uc0\u1047 \u1040 \u1043 \u1056 \u1059 \u1046 \u1040 \u1045 \u1052  \u1053 \u1040 \u1063 \u1040 \u1051 \u1068 \u1053 \u1067 \u1045  \u1053 \u1040 \u1057 \u1058 \u1056 \u1054 \u1049 \u1050 \u1048 \
+            async function fetchInitialSettings() \{\
+                try \{\
+                    const \{ data, error \} = await supabase\
+                        .from('profiles')\
+                        .select('overlay_position, overlay_scale')\
+                        .eq('id', streamerId)\
+                        .single();\
+                        \
+                    if (data) \{\
+                        applyLayout(data.overlay_position || 'bottom-right', data.overlay_scale || 1.0);\
+                    \}\
+                \} catch (err) \{ console.error("Initial config error:", err); \}\
+            \}\
+            await fetchInitialSettings();\
+\
+            // 3. \uc0\u1057 \u1051 \u1059 \u1064 \u1040 \u1045 \u1052  \u1058 \u1045 \u1051 \u1045 \u1060 \u1054 \u1053  \u1057 \u1058 \u1056 \u1048 \u1052 \u1045 \u1056 \u1040  (REALTIME \u1048 \u1047 \u1052 \u1045 \u1053 \u1045 \u1053 \u1048 \u1045  \u1051 \u1045 \u1049 \u1040 \u1059 \u1058 \u1040 )\
+            supabase.channel('obs-layout-updates')\
+                .on('postgres_changes', \{ \
+                    event: 'UPDATE', \
+                    schema: 'public', \
+                    table: 'profiles',\
+                    filter: `id=eq.$\{streamerId\}`\
+                \}, payload => \{\
+                    const pos = payload.new.overlay_position;\
+                    const scale = payload.new.overlay_scale;\
+                    applyLayout(pos, scale);\
+                \})\
+                .subscribe();\
+\
+            // 4. \uc0\u1057 \u1051 \u1059 \u1064 \u1040 \u1045 \u1052  \u1054 \u1044 \u1054 \u1041 \u1056 \u1045 \u1053 \u1053 \u1067 \u1045  \u1044 \u1054 \u1053 \u1040 \u1058 \u1067  \u1044 \u1051 \u1071  \u1042 \u1067 \u1042 \u1054 \u1044 \u1040  \u1053 \u1040  \u1069 \u1050 \u1056 \u1040 \u1053 \
+            supabase.channel('approved-donations')\
+                .on('postgres_changes', \{\
+                    event: 'UPDATE',\
+                    schema: 'public',\
+                    table: 'donations',\
+                    filter: `streamer_id=eq.$\{streamerId\}`\
+                \}, payload => \{\
+                    // \uc0\u1045 \u1089 \u1083 \u1080  \u1089 \u1090 \u1088 \u1080 \u1084 \u1077 \u1088  \u1085 \u1072 \u1078 \u1072 \u1083  Approve \u1074  iOS \u1072 \u1087 \u1087 \u1077 \
+                    if (payload.new.status === 'approved') \{\
+                        showDonationAlert(payload.new);\
+                    \}\
+                \})\
+                .subscribe();\
+\
+            // \uc0\u1060 \u1059 \u1053 \u1050 \u1062 \u1048 \u1071  \u1054 \u1058 \u1056 \u1048 \u1057 \u1054 \u1042 \u1050 \u1048  \u1044 \u1054 \u1053 \u1040 \u1058 \u1040 \
+            function showDonationAlert(donation) \{\
+                // \uc0\u1045 \u1089 \u1083 \u1080  \u1101 \u1090 \u1086  Co-Stream, \u1074  \u1086 \u1074 \u1077 \u1088 \u1083 \u1077 \u1081  \u1085 \u1077  \u1074 \u1099 \u1074 \u1086 \u1076 \u1080 \u1084  \u1074 \u1080 \u1076 \u1077 \u1086 , \u1090 \u1086 \u1083 \u1100 \u1082 \u1086  \u1072 \u1083 \u1077 \u1088 \u1090 \
+                const isCoStream = donation.video_hash.includes('costream');\
+                let mediaHtml = '';\
+                \
+                if (!isCoStream) \{\
+                    const videoUrl = donation.video_hash.includes('http') \
+                        ? donation.video_hash \
+                        : `$\{supabaseUrl\}/storage/v1/object/public/videos/$\{donation.video_hash\}`;\
+                    \
+                    mediaHtml = `\
+                        <div class="video-container">\
+                            <video src="$\{videoUrl\}" autoplay playsinline></video>\
+                        </div>\
+                    `;\
+                \} else \{\
+                    mediaHtml = `\
+                        <div style="text-align: center; color: #00E5FF; font-weight: bold; font-size: 14px; padding: 10px;">\
+                            \uc0\u9889  CO-STREAM CONNECTED\
+                        </div>\
+                    `;\
+                \}\
+\
+                // \uc0\u1057 \u1086 \u1079 \u1076 \u1072 \u1077 \u1084  \u1101 \u1083 \u1077 \u1084 \u1077 \u1085 \u1090  \u1082 \u1072 \u1088 \u1090 \u1086 \u1095 \u1082 \u1080 \
+                const alertEl = document.createElement('div');\
+                alertEl.className = 'donation-alert';\
+                alertEl.innerHTML = `\
+                    <div class="alert-header">\
+                        <div class="username">$\{donation.username\}</div>\
+                        <div class="amount">+$$\{parseFloat(donation.amount).toFixed(2)\}</div>\
+                    </div>\
+                    $\{mediaHtml\}\
+                `;\
+\
+                widgetContainer.appendChild(alertEl);\
+\
+                // \uc0\u1047 \u1072 \u1087 \u1091 \u1089 \u1082 \u1072 \u1077 \u1084  \u1072 \u1085 \u1080 \u1084 \u1072 \u1094 \u1080 \u1102  \u1087 \u1086 \u1103 \u1074 \u1083 \u1077 \u1085 \u1080 \u1103 \
+                requestAnimationFrame(() => \{\
+                    alertEl.classList.add('show');\
+                \});\
+\
+                // \uc0\u1045 \u1089 \u1083 \u1080  \u1101 \u1090 \u1086  \u1074 \u1080 \u1076 \u1077 \u1086 , \u1091 \u1076 \u1072 \u1083 \u1103 \u1077 \u1084  \u1074 \u1080 \u1076 \u1078 \u1077 \u1090  \u1087 \u1086 \u1089 \u1083 \u1077  \u1087 \u1088 \u1086 \u1080 \u1075 \u1088 \u1099 \u1074 \u1072 \u1085 \u1080 \u1103 . \u1045 \u1089 \u1083 \u1080  \u1085 \u1077 \u1090  - \u1095 \u1077 \u1088 \u1077 \u1079  15 \u1089 \u1077 \u1082 .\
+                const videoEl = alertEl.querySelector('video');\
+                if (videoEl) \{\
+                    videoEl.onended = () => removeAlert(alertEl);\
+                \} else \{\
+                    setTimeout(() => removeAlert(alertEl), 15000);\
+                \}\
+            \}\
+\
+            function removeAlert(el) \{\
+                el.classList.remove('show');\
+                setTimeout(() => el.remove(), 500); // \uc0\u1046 \u1076 \u1077 \u1084  \u1082 \u1086 \u1085 \u1077 \u1094  \u1072 \u1085 \u1080 \u1084 \u1072 \u1094 \u1080 \u1080  \u1080 \u1089 \u1095 \u1077 \u1079 \u1085 \u1086 \u1074 \u1077 \u1085 \u1080 \u1103 \
+            \}\
+        \});\
+    </script>\
+</body>\
+</html>}

@@ -1,0 +1,20 @@
+{
+    "name": "Whutcha Broadcast Cockpit",
+    "short_name": "Whutcha",
+    "description": "Zero-TOS Video Donations & Instant Live Co-Streams",
+    "start_url": "./dashboard.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#060709",
+    "theme_color": "#060709",
+    "orientation": "any",
+    "categories": ["entertainment", "utilities"],
+    "icons": [
+        {
+            "src": "./icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
