@@ -1,0 +1,18 @@
+# =============================================================================
+# WHUTCHA SOVEREIGN SECURITY & BROADCAST HEADERS
+# Compatible with Netlify, Cloudflare Pages, and Edge CDNs
+# =============================================================================
+
+# Default Global Security Headers for App Pages (Clickjacking & MIME Protection)
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), microphone=(self), display-capture=(self)
+  X-Robots-Tag: all
+
+# Dedicated Broadcast Overlay Exception: Allows OBS Studio & Streamlabs Browser Sources to embed cleanly
+/overlay.html
+  X-Frame-Options: ALLOWALL
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer-when-downgrade

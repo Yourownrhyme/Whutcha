@@ -1,0 +1,2090 @@
+/* ==========================================================================
+   WHUTCHA CYBER-BROADCAST DESIGN SYSTEM (2026 AAA STREAMER COCKPIT)
+   ========================================================================== */
+
+:root {
+    --cyber-bg: #060709;
+    --cyber-chassis: #0b0d13;
+    --cyber-panel: #11141c;
+    --cyber-panel-elevated: #161b26;
+    
+    /* Neon Accents */
+    --neon-cyan: #00f0ff;
+    --neon-cyan-glow: rgba(0, 240, 255, 0.4);
+    --neon-cyan-subtle: rgba(0, 240, 255, 0.12);
+    
+    --neon-magenta: #a800ff;
+    --neon-magenta-glow: rgba(168, 0, 255, 0.4);
+    --neon-magenta-subtle: rgba(168, 0, 255, 0.12);
+    
+    --neon-emerald: #10b981;
+    --neon-emerald-glow: rgba(16, 185, 129, 0.45);
+    
+    --neon-ruby: #ff0055;
+    --neon-ruby-glow: rgba(255, 0, 85, 0.4);
+    
+    --metal-border: rgba(255, 255, 255, 0.08);
+    --metal-border-bright: rgba(255, 255, 255, 0.18);
+}
+
+/* === CYBERPUNK ATMOSPHERIC LIGHTNING & SPARKS GLITCH (GPU OPTIMIZED - ZERO FILTER CHURN) === */
+@keyframes cyberLightningFlashes {
+    0%, 18%, 22%, 48%, 52%, 78%, 82%, 100% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    19% {
+        opacity: 0.16;
+        transform: translate3d(-1px, 1px, 0) scale(1.003);
+    }
+    21% {
+        opacity: 0.26;
+        transform: translate3d(1px, -1px, 0) scale(0.998);
+    }
+    49% {
+        opacity: 0.22;
+        transform: translate3d(1px, 1px, 0) scale(1.002);
+    }
+    51% {
+        opacity: 0.35;
+        transform: translate3d(-1px, 0, 0) scale(1.005);
+    }
+    79% {
+        opacity: 0.18;
+        transform: translate3d(0, -1px, 0) scale(0.999);
+    }
+    81% {
+        opacity: 0.28;
+        transform: translate3d(1px, 0, 0) scale(1.002);
+    }
+}
+
+@keyframes cyberLightningStreak {
+    0%, 48%, 53%, 100% {
+        opacity: 0;
+        transform: translate3d(-30%, -20%, 0) rotate(-15deg) scaleY(0.2);
+    }
+    49% {
+        opacity: 0.45;
+        transform: translate3d(0, 0, 0) rotate(-15deg) scaleY(1);
+    }
+    51% {
+        opacity: 0.7;
+        transform: translate3d(2px, -2px, 0) rotate(-15deg) scaleY(1.05);
+    }
+    52% {
+        opacity: 0.2;
+        transform: translate3d(0, 0, 0) rotate(-15deg) scaleY(0.8);
+    }
+}
+
+.cyber-lightning-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(168, 0, 255, 0.07) 0%, transparent 55%);
+}
+
+.cyber-lightning-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 35% 25%, rgba(0, 240, 255, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 75% 65%, rgba(168, 0, 255, 0.22) 0%, transparent 55%),
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.12) 0%, transparent 60%);
+    animation: cyberLightningFlashes 8.5s infinite ease-in-out;
+    pointer-events: none;
+    transform: translateZ(0);
+    will-change: opacity, transform;
+}
+
+.cyber-lightning-streak {
+    position: absolute;
+    top: 5%;
+    left: 20%;
+    width: 60%;
+    height: 120px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.8) 50%, transparent 100%);
+    filter: drop-shadow(0 0 12px #00f0ff);
+    animation: cyberLightningStreak 8.5s infinite ease-in-out;
+    pointer-events: none;
+    transform: translateZ(0);
+    will-change: opacity, transform;
+}
+
+/* Accessibility hidden input utility (strictly invisible, zero artifacts) */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* --- CYBER RACK & PANELS (GPU & FPS OPTIMIZED) --- */
+.cyber-rack {
+    background: linear-gradient(180deg, rgba(22, 27, 38, 0.94) 0%, rgba(13, 16, 24, 0.98) 100%);
+    border: 1px solid var(--metal-border);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    border-radius: 16px;
+}
+
+.cyber-rack.fixed {
+    position: fixed !important;
+}
+
+.cyber-rack.absolute {
+    position: absolute !important;
+}
+
+.cyber-rack::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent);
+    pointer-events: none;
+}
+
+/* Glowing Neon Borders */
+.cyber-border-cyan {
+    border-color: rgba(0, 240, 255, 0.35) !important;
+    box-shadow: 0 0 25px -5px var(--neon-cyan-glow), inset 0 0 15px -5px var(--neon-cyan-subtle);
+}
+
+.cyber-border-dual {
+    position: relative;
+    border: 1px solid transparent !important;
+    background-clip: padding-box;
+}
+
+.cyber-border-dual::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, transparent 40%, transparent 60%, var(--neon-magenta) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.cyber-border-dual:hover::after {
+    opacity: 1;
+}
+
+/* --- CRT SCANLINES --- */
+.cyber-scanlines {
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-scanlines::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* --- STREAM STATUS & HUD ELEMENTS --- */
+.pulse-on-air {
+    animation: onAirPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes onAirPulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.8), 0 0 40px rgba(0, 240, 255, 0.3);
+    }
+    50% {
+        opacity: 0.6;
+        box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+    }
+}
+
+/* Tactile Stream Deck Button */
+.stream-deck-key {
+    background: linear-gradient(180deg, #1b202c 0%, #12151e 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.stream-deck-key:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 240, 255, 0.5);
+    box-shadow: 0 6px 20px -2px var(--neon-cyan-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.stream-deck-key:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.stream-deck-key-danger {
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, rgba(20, 10, 15, 0.9) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.stream-deck-key-danger:hover {
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    box-shadow: 0 6px 20px -2px rgba(239, 68, 68, 0.35), inset 0 1px 0 rgba(255, 120, 120, 0.3) !important;
+}
+
+/* Sidebar High-Contrast Cyber Tooltips */
+.sidebar-tooltip {
+    position: absolute;
+    left: calc(100% + 26px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 270px;
+    padding: 0.85rem;
+    border-radius: 0.85rem;
+    background: rgba(8, 10, 18, 0.98);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .sidebar-tooltip {
+    opacity: 1;
+}
+
+.sidebar-tooltip-bottom {
+    top: auto !important;
+    bottom: 0 !important;
+    transform: none !important;
+}
+
+/* Reactions Vault 9:16 Shorts Cards */
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.25rem;
+}
+
+.vault-short-card {
+    background: linear-gradient(180deg, rgba(22, 28, 42, 0.75) 0%, rgba(10, 13, 20, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.vault-short-card:hover {
+    border-color: rgba(245, 158, 11, 0.55) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.22) !important;
+}
+
+.vault-short-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.5), transparent);
+    pointer-events: none;
+}
+
+.vault-video-stage {
+    aspect-ratio: 9 / 16;
+    width: 100%;
+    height: 360px;
+    position: relative;
+    background: #000;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+}
+
+.vault-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.15rem;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 158, 11, 0.2);
+    z-index: 10;
+}
+
+.vault-play-btn:hover {
+    background: rgba(245, 158, 11, 0.95);
+    border-color: #f59e0b;
+    color: #000;
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+}
+
+.vault-play-btn.is-playing {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translate(-50%, -50%) scale(0.75) !important;
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+.vault-video-stage:hover .vault-play-btn.is-playing {
+    opacity: 0.9 !important;
+    pointer-events: auto !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar-tooltip {
+        display: none !important;
+    }
+}
+
+/* Audio VU-Meter Indicator (GPU Transform - Zero Layout Reflow) */
+.vu-meter-bar {
+    width: 3px;
+    height: 18px;
+    background: linear-gradient(0deg, #10b981 0%, #00f0ff 65%, #ff0055 100%);
+    border-radius: 2px;
+    transform-origin: bottom;
+    will-change: transform;
+    animation: vuScaleBounce 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes vuScaleBounce {
+    0% { transform: scaleY(0.22); }
+    50% { transform: scaleY(1); }
+    100% { transform: scaleY(0.44); }
+}
+
+/* Guaranteed Onboarding Checklist 4-Column Grid */
+#onboarding-steps-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+#onboarding-steps-container.hidden {
+    display: none !important;
+}
+
+@media (max-width: 1024px) {
+    #onboarding-steps-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    #onboarding-steps-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Guaranteed High-Priority Modal & Floating Layer Stacking */
+#toast,
+#pwa-install-banner {
+    position: fixed !important;
+    z-index: 9000 !important;
+}
+
+#settings-modal,
+#obs-guide-modal,
+#costream-modal,
+#video-preview-modal,
+#reactions-vault-modal,
+#legal-modal-tos,
+#legal-modal-privacy,
+#legal-modal-contact,
+#recovery-modal,
+#observer-modal,
+#unverified-payout-modal {
+    position: fixed !important;
+    z-index: 99999 !important;
+}
+
+/* Reactions Vault Share Modal & Loco Celebrity Cameo Guard must always layer ABOVE all other modals */
+#share-vault-modal,
+#loco-revoked-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 100010 !important;
+}
+
+#loco-revoked-modal > .cyber-rack {
+    position: relative !important;
+    z-index: 100011 !important;
+}
+
+/* Futuristic Hardware Notches */
+.cyber-hardware-bevel {
+    clip-path: polygon(
+        12px 0%, 
+        calc(100% - 12px) 0%, 
+        100% 12px, 
+        100% calc(100% - 12px), 
+        calc(100% - 12px) 100%, 
+        12px 100%, 
+        0% calc(100% - 12px), 
+        0% 12px
+    );
+}
+
+/* ==========================================================================
+   STREAM DIVE WARP ANIMATION (GPU-ACCELERATED)
+   ========================================================================== */
+
+#stream-dive-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #040507;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    will-change: opacity;
+}
+
+.dive-ambient-glow {
+    position: absolute;
+    width: 70vw;
+    height: 70vh;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(168, 0, 255, 0.1) 50%, transparent 75%);
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: ambientPulse 1.2s ease-out forwards;
+}
+
+@keyframes ambientPulse {
+    0% { transform: scale(0.85); opacity: 0; }
+    30% { transform: scale(1.05); opacity: 0.9; }
+    80% { transform: scale(1.25); opacity: 0.6; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.dive-rig-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    will-change: transform, opacity;
+    animation: rigHyperZoom 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rigHyperZoom {
+    0% {
+        transform: scale(0.88) translateY(20px);
+        opacity: 0;
+    }
+    20% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+    75% {
+        transform: scale(1.06) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5) translateY(0);
+        opacity: 0;
+    }
+}
+
+/* Monitor Body */
+.dive-monitor-frame {
+    width: 860px;
+    max-width: 92vw;
+    height: 520px;
+    max-height: 60vh;
+    background: #0a0c12;
+    border: 3px solid #1a2030;
+    border-radius: 18px;
+    box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9),
+                0 0 50px -10px rgba(0, 240, 255, 0.25),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    padding: 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Screen Panel Inside Monitor */
+.dive-screen-glass {
+    flex: 1;
+    background: #06080d;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9),
+                inset 0 0 30px rgba(0, 240, 255, 0.15);
+}
+
+/* Underglow / Keyboard light */
+.dive-laptop-base {
+    width: 940px;
+    max-width: 96vw;
+    height: 18px;
+    background: linear-gradient(180deg, #181d2a 0%, #0d1017 100%);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 15px 35px rgba(0, 240, 255, 0.35);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dive-skip-badge {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #8b949e;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.dive-skip-badge:hover {
+    color: #fff;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px var(--neon-cyan-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #stream-dive-overlay {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   📱 PHASE 1: MOBILE PWA COCKPIT & BOTTOM NAVIGATION DOCK
+   ========================================================================== */
+.h-dvh-screen {
+    height: 100vh;
+    height: 100dvh;
+}
+
+@media (max-width: 767px) {
+    body {
+        padding: 8px !important;
+        gap: 0 !important;
+    }
+
+    .desktop-only-sidebar {
+        display: none !important;
+    }
+
+    .mobile-nav-bar {
+        display: flex !important;
+    }
+
+    .mobile-cockpit-main {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        border-radius: 16px !important;
+        padding: 16px 14px calc(5.5rem + env(safe-area-inset-bottom, 0px)) 14px !important;
+    }
+
+    /* Wrap Live Queue header cleanly on mobile */
+    .mobile-queue-header-wrap {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    .mobile-queue-header-wrap > * {
+        flex-shrink: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .mobile-nav-bar {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   📐 MULTI-VIEWPORT, SAFE-AREA INSETS & ERGONOMIC TOUCH STATES (BLOCK 3)
+   ========================================================================== */
+
+/* 1. Safe Area Insets (iPhone Dynamic Island & Home Bar) */
+:root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+}
+
+/* Modals must clear Dynamic Island & Home Bar across all mobile browsers */
+.fixed.inset-0 {
+    padding-top: max(14px, env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
+}
+
+/* 2. Ultra-small mobile (360px – 390px iPhone SE, Galaxy S) */
+@media (max-width: 400px) {
+    body {
+        padding: 4px !important;
+    }
+    .mobile-cockpit-main {
+        padding: 12px 10px calc(5.2rem + env(safe-area-inset-bottom, 0px)) 10px !important;
+    }
+    #mobile-bottom-nav {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+    #mobile-bottom-nav button {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        min-width: 48px !important;
+    }
+    #mobile-bottom-nav span.font-mono-tech {
+        font-size: 8.5px !important;
+        letter-spacing: 0.02em !important;
+    }
+    .price-preset-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+    }
+    .price-preset-grid button {
+        font-size: 10px !important;
+        padding: 6px 2px !important;
+    }
+}
+
+/* 3. Tablets: iPad Mini / Air (768px – 1024px in portrait & landscape) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .desktop-only-sidebar {
+        width: 76px !important;
+        padding: 14px 8px !important;
+    }
+    .desktop-only-sidebar .hidden.md\:block,
+    .desktop-only-sidebar .hidden.md\:flex,
+    .desktop-only-sidebar .hidden.md\:inline {
+        display: none !important;
+    }
+    .desktop-only-sidebar button {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .desktop-only-sidebar #sound-toggle-track {
+        display: none !important;
+    }
+    .desktop-only-sidebar #whutcha-sound-deck-card {
+        padding: 6px !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+    .mobile-cockpit-main {
+        padding: 20px 16px !important;
+    }
+}
+
+/* 4. Ultra-wide & 4K (1440px – 2560px+) */
+@media (min-width: 1600px) {
+    .cockpit-content-constraint {
+        max-width: 1540px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+    }
+}
+
+/* 5. Touch Devices: Eliminate Sticky Hover & Enhance Tactile Active Feedback */
+@media (hover: none) and (pointer: coarse) {
+    button:hover, a:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* ==========================================================================
+   UNIVERSAL INTERACTIVE CURSOR ENGINE (AAA A11Y & TACTILE UX STANDARD)
+   Guarantees crisp cursor: pointer on EVERY clickable / interactive element
+   ========================================================================== */
+button,
+a,
+summary,
+select,
+label,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+input[type="range"],
+[role="button"],
+[role="tab"],
+[role="switch"],
+[role="menuitem"],
+[role="link"],
+[role="checkbox"],
+[role="radio"],
+[role="option"],
+.cursor-pointer,
+.tab-btn,
+.filter-btn,
+.preset-btn,
+.interactive-card,
+.seed-claim-btn,
+.seed-delist-btn {
+    cursor: pointer !important;
+}
+
+/* Any element with an inline or attached click handler (excluding modal backdrops) */
+[onclick]:not([role="dialog"]):not(.modal-backdrop):not(.non-interactive) {
+    cursor: pointer !important;
+}
+
+/* Modal Dialog Contents should maintain default cursor for reading text */
+[role="dialog"] > div,
+.modal-content,
+.modal-body {
+    cursor: default;
+}
+
+/* Text inputs and textareas must always retain text cursor */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+textarea,
+[contenteditable="true"] {
+    cursor: text !important;
+}
+
+/* Standardized Micro-States: Default -> Hover -> Active -> Disabled */
+button, a[role="button"], .preset-btn {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color 0.15s ease, 
+                border-color 0.15s ease, 
+                box-shadow 0.15s ease, 
+                opacity 0.15s ease;
+}
+
+button:active:not(:disabled), a[role="button"]:active {
+    transform: scale(0.97) translateY(1px) !important;
+}
+
+/* Explicitly Disabled Interactive Controls */
+button:disabled,
+button[disabled],
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"],
+.disabled {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ==========================================================================
+   ANTI-CLONE & ASSET PROTECTION ARMOR (AAA IP & ASSET SECURITY)
+   Prevents asset ripping, ghost dragging, and casual UI reproduction
+   ========================================================================== */
+img,
+video,
+canvas,
+svg,
+.cyber-rack,
+.cyber-panel,
+.brand-asset,
+.mascot-avatar,
+.seed-blueprint-card,
+button,
+[role="button"] {
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
+    -webkit-touch-callout: none !important;
+}
+
+/* UI Shell Non-Selection (Protects design layout while allowing text inputs) */
+body,
+header,
+nav,
+footer,
+.cyber-chassis,
+.preset-btn,
+.tab-btn,
+.filter-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Genuine Form Inputs & Legal Text MUST remain selectable (Accessibility & Form Usability) */
+input,
+textarea,
+code,
+pre,
+.selectable-text,
+.legal-content,
+[contenteditable="true"] {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* ==========================================================================
+   HALL OF FAME & LEADERBOARD CYBER TITANIUM STYLES
+   ========================================================================== */
+.rank-apex {
+    border: 1.5px solid rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.2), inset 0 0 20px rgba(245, 158, 11, 0.05);
+    background: linear-gradient(180deg, rgba(30, 24, 15, 0.95) 0%, rgba(13, 16, 24, 0.98) 100%) !important;
+}
+
+.rank-apex::before {
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.8), transparent) !important;
+}
+
+.rank-silver {
+    border: 1.5px solid rgba(192, 205, 220, 0.5) !important;
+    box-shadow: 0 0 25px rgba(192, 205, 220, 0.15), inset 0 0 15px rgba(192, 205, 220, 0.04);
+    background: linear-gradient(180deg, rgba(24, 28, 38, 0.95) 0%, rgba(13, 16, 24, 0.98) 100%) !important;
+}
+
+.rank-silver::before {
+    background: linear-gradient(90deg, transparent, rgba(192, 205, 220, 0.7), transparent) !important;
+}
+
+.rank-bronze {
+    border: 1.5px solid rgba(217, 119, 6, 0.5) !important;
+    box-shadow: 0 0 25px rgba(217, 119, 6, 0.15), inset 0 0 15px rgba(217, 119, 6, 0.04);
+    background: linear-gradient(180deg, rgba(28, 20, 16, 0.95) 0%, rgba(13, 16, 24, 0.98) 100%) !important;
+}
+
+.rank-bronze::before {
+    background: linear-gradient(90deg, transparent, rgba(217, 119, 6, 0.7), transparent) !important;
+}
+
+.filter-pill {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    user-select: none;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-pill-active {
+    background: rgba(0, 240, 255, 0.15) !important;
+    color: #00f0ff !important;
+    border-color: rgba(0, 240, 255, 0.6) !important;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+}
+
+.filter-pill-inactive {
+    background: rgba(255, 255, 255, 0.03);
+    color: #8b949e;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.filter-pill-inactive:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+@media (min-width: 640px) {
+    .sm\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+.broadcaster-avatar {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
+    object-fit: cover !important;
+    border-radius: 12px !important;
+    display: block !important;
+}
+
+@media (min-width: 640px) {
+    .broadcaster-avatar {
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        max-width: 64px !important;
+        max-height: 64px !important;
+        border-radius: 14px !important;
+    }
+}
+
+/* === VIEWER VIDEO STATUS MODAL & REACTION DELIVERY HUD === */
+#video-status-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    background: rgba(4, 6, 10, 0.96) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+}
+
+#video-status-modal.flex {
+    display: flex !important;
+}
+
+#video-status-modal.hidden {
+    display: none !important;
+}
+
+#video-status-modal > .cyber-rack {
+    background: linear-gradient(180deg, #131722 0%, #0b0d14 100%) !important;
+    border: 1px solid rgba(0, 240, 255, 0.4) !important;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.98), 0 0 30px rgba(0, 240, 255, 0.2) !important;
+    border-radius: 20px !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    position: relative !important;
+}
+
+#reaction-player-container {
+    width: 100% !important;
+    max-width: 240px !important;
+    aspect-ratio: 9 / 16 !important;
+    height: 340px !important;
+    background: #000 !important;
+    border-radius: 14px !important;
+    border: 2px solid rgba(168, 0, 255, 0.6) !important;
+    box-shadow: 0 0 35px rgba(168, 0, 255, 0.4) !important;
+    overflow: hidden !important;
+    margin: 0.5rem auto !important;
+}
+
+#reaction-video-element {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* === DIRECTOR GREEN ROOM & THEATER PREVIEW SIZING GUARANTEES === */
+#costream-modal > .cyber-rack {
+    height: min(86vh, 740px) !important;
+    min-height: 540px !important;
+}
+
+#costream-local-vid,
+#costream-remote-vid {
+    min-height: 300px !important;
+}
+
+#green-room-video {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    background: #000 !important;
+}
+
+/* === AAA 9:16 VERTICAL THEATER SIZING GUARANTEES (ZERO HORIZONTAL STRETCH / STRICT SMARTPHONE HUD) === */
+#video-preview-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 100000 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(3, 5, 10, 0.96) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#costream-modal {
+    background: rgba(3, 5, 10, 0.96) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* === AAA VIDEO PLAYBACK ACCELERATOR (ELIMINATES ALL STUTTER & DROPPED FRAMES) === */
+body.video-playback-active .cyber-lightning-flash {
+    display: none !important;
+}
+
+body.video-playback-active #dashboard-main,
+body.video-playback-active #sidebar,
+body.video-playback-active .cyber-rack:not(#costream-modal *):not(#video-preview-modal *) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#video-preview-modal #theater-video-player,
+#green-room-video,
+#costream-modal video {
+    transform: translate3d(0, 0, 0) !important;
+    will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    contain: strict !important;
+}
+
+#video-preview-modal.flex {
+    display: flex !important;
+}
+
+#video-preview-modal > .cyber-rack {
+    width: 390px !important;
+    max-width: calc(100vw - 28px) !important;
+    max-height: min(94vh, 760px) !important;
+    border-radius: 28px !important;
+    margin: auto !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border: 2px solid rgba(0, 240, 255, 0.45) !important;
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.2), 0 20px 60px rgba(0, 0, 0, 0.95) !important;
+}
+
+#video-preview-modal .theater-chassis {
+    width: 100% !important;
+    max-width: 310px !important;
+    aspect-ratio: 9 / 16 !important;
+    height: auto !important;
+    max-height: 48vh !important;
+    margin: 0 auto !important;
+    border-radius: 20px !important;
+    background: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95), 0 8px 30px rgba(0, 0, 0, 0.8) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+#video-preview-modal #theater-video-player {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    background: #000 !important;
+    border-radius: 18px !important;
+    transform: translateZ(0) !important;
+    will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+}
+
+#green-room-video,
+#costream-modal video {
+    transform: translateZ(0) !important;
+    will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+}
+
+/* === MODERN WEB GUIDANCE: DEFER RENDERING HEAVY OFF-SCREEN CONTENT === */
+#leaderboard-list > div:nth-child(n+4),
+#queue-container > div:nth-child(n+5) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 130px;
+}
+
+/* === AAA GLOBAL MODAL STACKING ENGINE === */
+#loco-antiban-modal,
+#observer-modal,
+#loco-mascot-modal,
+#settings-modal,
+#costream-modal,
+#recovery-modal,
+#claim-modal,
+#bounty-success-modal,
+#vault-player-modal,
+#ios-install-modal,
+#pwa-update-banner {
+    z-index: 9999 !important;
+}
+
+#ios-install-modal {
+    position: fixed !important;
+    inset: 0 !important;
+}
+
+#pwa-update-banner {
+    position: fixed !important;
+    bottom: 5.5rem !important; /* Safely floats above mobile nav bar */
+    right: 1rem !important;
+    max-width: calc(100% - 2rem);
+}
+
+@media (min-width: 640px) {
+    #pwa-update-banner {
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        max-width: 28rem;
+    }
+}
+
+/* === WCAG 2.1 AA KEYBOARD FOCUS-VISIBLE ENGINE === */
+:focus-visible {
+    outline: 2px solid #00f0ff !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.45) !important;
+    transition: outline-offset 0.15s ease;
+}
+
+/* Remove default focus outline on mouse click */
+:focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* === CORE WEB VITALS: ZERO CLS & LAYOUT CONTAINMENT === */
+.cyber-rack {
+    contain: layout style;
+}
+
+#queue-container {
+    min-height: 140px;
+}
+
+/* === 60-120 FPS HARDWARE COMPOSITOR ENGINE (ZERO-JANK) === */
+@keyframes eqBounce1 { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes eqBounce2 { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.25); } }
+@keyframes eqBounce3 { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(0.9); } }
+@keyframes eqBounce4 { 0%, 100% { transform: scaleY(0.85); } 50% { transform: scaleY(0.35); } }
+
+.eq-animating span:nth-child(1), .eq-animating .sound-eq-bar:nth-child(1) {
+    animation: eqBounce1 0.7s infinite alternate ease-in-out;
+    transform-origin: bottom;
+    will-change: transform;
+}
+.eq-animating span:nth-child(2), .eq-animating .sound-eq-bar:nth-child(2) {
+    animation: eqBounce2 0.5s infinite alternate ease-in-out;
+    transform-origin: bottom;
+    will-change: transform;
+}
+.eq-animating span:nth-child(3), .eq-animating .sound-eq-bar:nth-child(3) {
+    animation: eqBounce3 0.8s infinite alternate ease-in-out;
+    transform-origin: bottom;
+    will-change: transform;
+}
+.eq-animating span:nth-child(4), .eq-animating .sound-eq-bar:nth-child(4) {
+    animation: eqBounce4 0.6s infinite alternate ease-in-out;
+    transform-origin: bottom;
+    will-change: transform;
+}
+
+/* === CYBERPUNK RANGE SLIDERS (SCRUBBER & VOLUME) === */
+.cyber-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    height: 6px;
+}
+.cyber-slider:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+.cyber-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.85);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 1.5px solid #ffffff;
+}
+.cyber-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 1);
+}
+.cyber-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.85);
+    cursor: pointer;
+    border: 1.5px solid #ffffff;
+}
+
+/* Speed Pills Styling */
+.speed-pill-active {
+    background: rgba(0, 240, 255, 0.25) !important;
+    color: #00f0ff !important;
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.4) !important;
+}
+
+/* GPU Layer Promotion & Smooth Compositing (Zero-Jank 60-120 FPS) */
+.desktop-only-sidebar,
+.cockpit-content-constraint {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+main {
+    transform: translateZ(0);
+    will-change: scroll-position;
+    contain: layout;
+}
+
+/* ==========================================================================
+   AAA SETTINGS MODAL OBSIDIAN TITANIUM SYSTEM (ELIMINATES 90S WHITE BOXES)
+   ========================================================================== */
+#settings-modal {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(3, 5, 10, 0.94) !important;
+}
+
+#settings-modal .cyber-rack {
+    background: linear-gradient(180deg, #0b0e1a 0%, #060812 100%) !important;
+    border: 1px solid rgba(0, 240, 255, 0.35) !important;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 25px rgba(0, 240, 255, 0.15) !important;
+}
+
+#settings-modal .settings-card,
+#settings-modal .space-y-2\.5 > div {
+    background: linear-gradient(180deg, rgba(16, 21, 35, 0.85) 0%, rgba(8, 11, 20, 0.96) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+#settings-modal input[type="text"],
+#settings-modal input[type="url"],
+#settings-modal input[type="number"],
+#settings-modal input[type="password"] {
+    background: #04060d !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(0, 240, 255, 0.25) !important;
+    border-radius: 10px !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    outline: none !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+    transition: all 0.2s ease !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+#settings-modal input:focus {
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+#settings-modal select {
+    background: #04060d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2300f0ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat right 0.75rem center !important;
+    background-size: 0.9rem 0.9rem !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(0, 240, 255, 0.25) !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 2.2rem 0.5rem 0.75rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    outline: none !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+    transition: all 0.2s ease !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    cursor: pointer !important;
+}
+
+#settings-modal select:focus {
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+#settings-modal select option {
+    background: #070a14 !important;
+    color: #ffffff !important;
+    padding: 0.5rem !important;
+}
+
+/* Modal Open GPU Isolation (Freezes background filters for instant 0ms input response) */
+body:has(#settings-modal.flex) #dashboard-main,
+body:has(#settings-modal:not(.hidden)) #dashboard-main,
+body:has(#costream-modal.flex) #dashboard-main,
+body:has(#costream-modal:not(.hidden)) #dashboard-main,
+body:has(#reactions-vault-modal.flex) #dashboard-main,
+body:has(#reactions-vault-modal:not(.hidden)) #dashboard-main {
+    filter: none !important;
+    backdrop-filter: none !important;
+}
+
+body:has(#settings-modal.flex) .cyber-rack:not(#settings-modal *),
+body:has(#settings-modal:not(.hidden)) .cyber-rack:not(#settings-modal *),
+body:has(#costream-modal.flex) .cyber-rack:not(#costream-modal *),
+body:has(#costream-modal:not(.hidden)) .cyber-rack:not(#costream-modal *),
+body:has(#reactions-vault-modal.flex) .cyber-rack:not(#reactions-vault-modal *),
+body:has(#reactions-vault-modal:not(.hidden)) .cyber-rack:not(#reactions-vault-modal *) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* ==========================================================================
+   AAA HARDWARE RACK SYSTEM (CH-01..06 INTEGRATION CHASSIS)
+   ========================================================================== */
+.hardware-chassis {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.94) 0%, rgba(8, 11, 20, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hardware-chassis:hover {
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-chassis-cyan:hover {
+    border-color: rgba(0, 240, 255, 0.45) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.hardware-chassis-discord:hover {
+    border-color: rgba(88, 101, 242, 0.55) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(88, 101, 242, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.hardware-chassis-telegram:hover {
+    border-color: rgba(34, 158, 217, 0.55) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(34, 158, 217, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.hardware-chassis-violet:hover {
+    border-color: rgba(168, 0, 255, 0.55) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(168, 0, 255, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.hardware-input {
+    background: #04060d !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    outline: none !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85) !important;
+    transition: all 0.2s ease !important;
+}
+
+.hardware-input:focus {
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+.hardware-input-discord:focus {
+    border-color: #5865F2 !important;
+    box-shadow: 0 0 14px rgba(88, 101, 242, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+.hardware-input-telegram:focus {
+    border-color: #229ED9 !important;
+    box-shadow: 0 0 14px rgba(34, 158, 217, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+.hardware-btn {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(12, 16, 28, 0.85) 60%, rgba(6, 8, 16, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.14) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    user-select: none !important;
+}
+
+.hardware-btn:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+.hardware-btn:active {
+    transform: scale(0.98);
+}
+
+.hardware-btn-cyan {
+    border-color: rgba(0, 240, 255, 0.45) !important;
+    color: #00f0ff !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(0, 240, 255, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-cyan:hover {
+    border-color: #00f0ff !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 240, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-discord {
+    border-color: rgba(88, 101, 242, 0.5) !important;
+    color: #a5b0ff !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(88, 101, 242, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-discord:hover {
+    border-color: #5865F2 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(88, 101, 242, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-telegram {
+    border-color: rgba(34, 158, 217, 0.5) !important;
+    color: #67c7f3 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(34, 158, 217, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-telegram:hover {
+    border-color: #229ED9 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(34, 158, 217, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-violet {
+    border-color: rgba(168, 0, 255, 0.5) !important;
+    color: #d8b4fe !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(168, 0, 255, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-violet:hover {
+    border-color: #a800ff !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(168, 0, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-emerald {
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    color: #6ee7b7 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(16, 185, 129, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-emerald:hover {
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-red {
+    border-color: rgba(239, 68, 68, 0.5) !important;
+    color: #fca5a5 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(239, 68, 68, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-red:hover {
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.hardware-btn-amber {
+    border-color: rgba(245, 158, 11, 0.5) !important;
+    color: #fcd34d !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(245, 158, 11, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.hardware-btn-amber:hover {
+    border-color: #f59e0b !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ==========================================================================
+   AAA LIVE QUEUE & FOOTER DECK (PHASE 3)
+   ========================================================================== */
+.live-queue-deck {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.95) 0%, rgba(7, 10, 18, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    position: relative;
+    overflow: hidden;
+    padding: 0.85rem 1.15rem !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.live-queue-deck::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.7), rgba(0, 240, 255, 0.6), transparent);
+    pointer-events-none;
+}
+
+.hotkey-capsule {
+    background: rgba(4, 6, 13, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+    padding: 0.35rem 0.75rem !important;
+}
+
+.hotkey-kbd {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.625rem !important;
+    font-weight: 800 !important;
+    padding: 0.15rem 0.4rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+}
+
+.panic-killswitch-btn {
+    background: linear-gradient(180deg, rgba(244, 63, 94, 0.22) 0%, rgba(20, 6, 10, 0.9) 60%, rgba(10, 2, 5, 0.98) 100%) !important;
+    border: 1px solid rgba(244, 63, 94, 0.55) !important;
+    border-radius: 12px !important;
+    color: #fecdd3 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 16px rgba(244, 63, 94, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.panic-killswitch-btn:hover {
+    border-color: #f43f5e !important;
+    color: #ffffff !important;
+    filter: brightness(1.2);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(244, 63, 94, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+.panic-killswitch-btn:active {
+    transform: scale(0.97);
+}
+
+.mute-obs-btn {
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.2) 0%, rgba(20, 14, 6, 0.9) 60%, rgba(10, 7, 2, 0.98) 100%) !important;
+    border: 1px solid rgba(245, 158, 11, 0.5) !important;
+    border-radius: 12px !important;
+    color: #fde68a !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.75rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 14px rgba(245, 158, 11, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.mute-obs-btn:hover {
+    border-color: #f59e0b !important;
+    color: #ffffff !important;
+    filter: brightness(1.2);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 24px rgba(245, 158, 11, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.mute-obs-btn:active {
+    transform: scale(0.97);
+}
+
+.empty-queue-chassis {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.92) 0%, rgba(7, 10, 18, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease-out;
+}
+
+.empty-queue-chassis::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), rgba(168, 0, 255, 0.5), transparent);
+    pointer-events-none;
+}
+
+.legal-footer-console {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.95) 0%, rgba(6, 8, 16, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.14) !important;
+    padding: 0.4rem 0.6rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+.legal-footer-btn {
+    height: 2.5rem !important;
+    padding: 0 1.35rem !important;
+    border-radius: 9999px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #cbd5e1 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.6875rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+.legal-footer-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.15) !important;
+}
+
+.legal-footer-btn:active {
+    transform: scale(0.97);
+}
+
+.legal-footer-btn-tos:hover {
+    border-color: rgba(0, 240, 255, 0.5) !important;
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.35) !important;
+    color: #00f0ff !important;
+}
+
+.legal-footer-btn-privacy:hover {
+    border-color: rgba(168, 0, 255, 0.5) !important;
+    box-shadow: 0 0 18px rgba(168, 0, 255, 0.35) !important;
+    color: #d8b4fe !important;
+}
+
+.legal-footer-btn-contacts:hover {
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.35) !important;
+    color: #6ee7b7 !important;
+}
+
+/* ==========================================================================
+   AAA DIRECTOR GREEN ROOM & REACTIONS VAULT (PHASE 4)
+   ========================================================================== */
+#costream-modal .cyber-rack {
+    background: linear-gradient(180deg, #090d18 0%, #050711 100%) !important;
+    border: 1px solid rgba(16, 185, 129, 0.45) !important;
+    box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(16, 185, 129, 0.2) !important;
+}
+
+.studio-monitor {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.95) 0%, rgba(6, 8, 16, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.studio-monitor-caller {
+    border-color: rgba(16, 185, 129, 0.45) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.14) !important;
+}
+
+#reactions-vault-modal .cyber-rack {
+    background: linear-gradient(180deg, #0d1120 0%, #060812 100%) !important;
+    border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(245, 158, 11, 0.2) !important;
+}
+
+.vault-meta-capsule {
+    background: rgba(4, 6, 13, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    padding: 0.4rem 0.85rem !important;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.vault-empty-stage {
+    background: linear-gradient(180deg, rgba(14, 18, 30, 0.9) 0%, rgba(6, 8, 16, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ==========================================================================
+   AAA LANDING, AUTH CONSOLE & NAVIGATION PILLS (PHASE 5)
+   ========================================================================== */
+
+/* 1. Feature Cards Chassis (Screenshot Блок1) */
+.feature-card-chassis {
+    background: linear-gradient(180deg, rgba(16, 21, 35, 0.95) 0%, rgba(8, 11, 20, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.feature-card-chassis::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    pointer-events: none;
+    transition: all 0.28s ease;
+}
+
+.feature-card-chassis:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: rgba(0, 240, 255, 0.45) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 240, 255, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.feature-card-chassis:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.8), transparent);
+}
+
+.feature-card-chassis.card-costream:hover {
+    border-color: rgba(168, 0, 255, 0.5) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(168, 0, 255, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+.feature-card-chassis.card-costream:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(168, 0, 255, 0.8), transparent);
+}
+
+.feature-card-chassis.card-shorts:hover {
+    border-color: rgba(245, 158, 11, 0.5) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(245, 158, 11, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+.feature-card-chassis.card-shorts:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.8), transparent);
+}
+
+.feature-card-chassis.card-direct:hover {
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(16, 185, 129, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+.feature-card-chassis.card-direct:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
+}
+
+/* 2. Streamer Sign In Card Chassis (Screenshot Блок2 & Sign) */
+.auth-card-chassis {
+    background: linear-gradient(180deg, rgba(16, 21, 36, 0.96) 0%, rgba(9, 12, 22, 0.98) 50%, rgba(5, 7, 13, 0.99) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 28px !important;
+    box-shadow: 0 25px 75px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.16), 0 0 40px rgba(0, 240, 255, 0.08) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-card-chassis::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.7), transparent);
+    pointer-events: none;
+}
+
+.cockpit-sub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+}
+
+.oauth-hardware-btn {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(12, 16, 28, 0.85) 60%, rgba(6, 8, 16, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 16px !important;
+    padding: 0.75rem 1rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+    transition: all 0.22s ease !important;
+    cursor: pointer;
+    user-select: none;
+}
+
+.oauth-hardware-btn:hover {
+    border-color: rgba(0, 240, 255, 0.5) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 240, 255, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px);
+}
+
+.oauth-hardware-btn:active {
+    transform: scale(0.99);
+}
+
+.oauth-hardware-btn.btn-github:hover {
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 20px rgba(168, 85, 247, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.demo-sandbox-btn {
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.1) 0%, rgba(14, 18, 30, 0.9) 60%, rgba(6, 8, 16, 0.98) 100%) !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    border-radius: 16px !important;
+    padding: 0.75rem 1rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6), 0 0 15px rgba(245, 158, 11, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.14) !important;
+    transition: all 0.22s ease !important;
+    cursor: pointer;
+}
+
+.demo-sandbox-btn:hover {
+    border-color: #f59e0b !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+    transform: translateY(-1px);
+}
+
+.cyber-checkbox-plate {
+    background: rgba(4, 6, 13, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 14px !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+    transition: all 0.2s ease !important;
+}
+
+.cyber-checkbox-plate:hover {
+    border-color: rgba(0, 240, 255, 0.5) !important;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 240, 255, 0.15) !important;
+}
+
+/* 3. Header Navigation Pills (Screenshot Блок3) */
+.nav-capsule-btn {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(14, 18, 30, 0.88) 60%, rgba(7, 10, 18, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 14px !important;
+    padding: 0.55rem 0.95rem !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.14) !important;
+    transition: all 0.22s ease !important;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+.nav-capsule-btn:hover {
+    border-color: rgba(0, 240, 255, 0.6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 18px rgba(0, 240, 255, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+    transform: translateY(-1px);
+}
+
+.nav-capsule-btn:active {
+    transform: scale(0.97);
+}
+
+.nav-capsule-btn.btn-portal:hover {
+    border-color: rgba(168, 0, 255, 0.6) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 18px rgba(168, 0, 255, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+/* ==========================================================================
+   CREATOR CHANNEL CLAIM PANEL
+   ========================================================================== */
+.seed-shield-chassis {
+    background: linear-gradient(180deg, rgba(16, 21, 36, 0.96) 0%, rgba(9, 12, 22, 0.98) 60%, rgba(4, 6, 13, 0.99) 100%) !important;
+    border: 1px solid rgba(0, 240, 255, 0.35) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 240, 255, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.16) !important;
+    position: relative;
+    overflow: hidden;
+    padding: 1.25rem !important;
+    transition: all 0.25s ease;
+}
+
+.seed-shield-chassis::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.7), transparent);
+    pointer-events: none;
+}
+
+.seed-blueprint-card {
+    background: rgba(4, 6, 13, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    padding: 0.85rem !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+}
+
+.seed-delist-btn {
+    background: transparent !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    color: #fca5a5 !important;
+    border-radius: 12px !important;
+    padding: 0.5rem 0.85rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.seed-delist-btn:hover {
+    background: rgba(239, 68, 68, 0.12) !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3) !important;
+}
+
+.seed-claim-btn {
+    background: linear-gradient(180deg, #00f0ff 0%, #00b4d8 100%) !important;
+    color: #000000 !important;
+    border: 1px solid rgba(0, 240, 255, 0.8) !important;
+    border-radius: 12px !important;
+    padding: 0.5rem 1rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.seed-claim-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.6) !important;
+    transform: translateY(-1px);
+}
+
+
+
+
+
+
+
+
+

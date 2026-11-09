@@ -1,0 +1,9 @@
+{
+  "name": "whutcha-web",
+  "version": "1.0.0",
+  "description": "Whutcha Web Platform & Streamer PWA",
+  "scripts": {
+    "dev": "python3 -m http.server 7003",
+    "start": "python3 -m http.server 7003"
+  }
+}

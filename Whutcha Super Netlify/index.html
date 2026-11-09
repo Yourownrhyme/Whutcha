@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whutcha - Support the Stream</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0A0A0F; font-family: 'Outfit', sans-serif; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background-image: radial-gradient(circle at 50% -20%, #2A1544 0%, #0A0A0F 50%); background-attachment: fixed; }
+        .brand-container { text-align: center; margin-bottom: 24px; }
+        .brand-title { font-size: 42px; font-weight: 900; background: linear-gradient(135deg, #9D00FF 0%, #00E5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+        .brand-subtitle { font-size: 12px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 3px; margin-top: 4px; }
+        .card-box { width: 100%; max-width: 440px; background: rgba(20, 20, 30, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+        .tabs-container { display: flex; gap: 12px; margin-bottom: 24px; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 16px; }
+        .tab-btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .active-tab { background: linear-gradient(135deg, #9D00FF 0%, #00E5FF 100%); color: #fff; box-shadow: 0 10px 20px -5px rgba(157, 0, 255, 0.4); }
+        .inactive-tab { background: transparent; color: #6B7280; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 11px; font-weight: 800; color: #9CA3AF; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .form-input { width: 100%; padding: 16px; background: rgba(10, 10, 15, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; color: #fff; font-size: 16px; font-weight: 500; outline: none; }
+        .media-box { position: relative; background: #000; border-radius: 16px; height: 220px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px; }
+        #camera-feed { width: 100%; height: 100%; object-fit: cover; }
+        .action-btn { width: 100%; background: linear-gradient(135deg, #9D00FF 0%, #00E5FF 100%); color: #fff; font-weight: 900; font-size: 16px; padding: 18px; border-radius: 14px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .record-circle { width: 56px; height: 56px; background: linear-gradient(135deg, #FF0055 0%, #FF00A6 100%); border-radius: 50%; border: 3px solid #fff; cursor: pointer; box-shadow: 0 0 0 4px rgba(255, 0, 85, 0.3); }
+        .recording-pulse { animation: pulse 1.5s infinite; border-radius: 12px !important; width: 40px !important; height: 40px !important; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 0, 85, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); } }
+        .hidden { display: none !important; }
+        .overlay-screen { width: 100%; max-width: 440px; background: rgba(20, 20, 30, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px 24px; text-align: center; }
+        .live-container { width: 100%; max-width: 900px; height: 80vh; background: #000; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 20px; position: relative; }
+        .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; height: 100%; margin-top: 40px; }
+        .live-box { background: #111; border-radius: 16px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body>
+
+    <div class="brand-container">
+        <h1 class="brand-title">WHUTCHA</h1>
+        <p class="brand-subtitle">Drop a vibe</p>
+    </div>
+
+    <!-- MAIN FORM -->
+    <div id="main-form-ui" class="card-box">
+        <div class="tabs-container">
+            <button id="tab-video" class="tab-btn active-tab">📹 Video (15s)</button>
+            <button id="tab-costream" class="tab-btn inactive-tab">⚡ Co-Stream</button>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <label class="form-label">Your Nickname</label>
+                <input type="text" id="nickname" placeholder="Enter your name..." class="form-input">
+            </div>
+
+            <!-- Video Box -->
+            <div id="video-section" class="media-box">
+                <video id="camera-feed" autoplay muted playsinline></video>
+                <div id="camera-error" class="hidden" style="position: absolute; inset: 0; background: rgba(120, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;">
+                    <span style="font-size: 28px; margin-bottom: 8px;">📸</span>
+                    <span id="camera-error-text" style="font-size: 12px; font-weight: bold;"></span>
+                </div>
+                <div id="timer-display" class="hidden" style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); font-size: 11px; font-weight: bold; padding: 6px 10px; border-radius: 8px;">00:15</div>
+                <button id="retake-btn" class="hidden" style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: #fff; font-size: 11px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;">🔄 RETAKE</button>
+                <div id="record-btn-container" style="position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center;">
+                    <button id="record-btn" class="record-circle"></button>
+                </div>
+            </div>
+
+            <!-- Co-Stream Box -->
+            <div id="costream-section" class="hidden media-box" style="background: linear-gradient(135deg, #12121a 0%, #050508 100%); flex-direction: column; text-align: center; padding: 20px;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(0, 229, 255, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    <span style="font-size: 24px;">⚡</span>
+                </div>
+                <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 4px;">Live Co-Stream Request</h3>
+                <p style="font-size: 12px; color: #9CA3AF;">Ensure camera/mic are ready.</p>
+            </div>
+
+            <button id="submit-btn" class="action-btn">PROCEED TO PAYMENT</button>
+        </div>
+    </div>
+
+    <!-- WAITING ROOM UI (For Co-Streams) -->
+    <div id="waiting-ui" class="hidden overlay-screen">
+        <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 8px;">Request Sent!</h2>
+        <p style="font-size: 14px; color: #9CA3AF; margin-bottom: 16px;">Waiting for the streamer to accept your request...</p>
+    </div>
+
+    <!-- LIVE ROOM UI -->
+    <div id="live-room-ui" class="hidden live-container">
+        <div class="live-grid">
+            <div class="live-box"><div id="remote-video-container" style="width: 100%; height: 100%;"></div></div>
+            <div class="live-box"><div id="local-video-container" style="width: 100%; height: 100%;"></div></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const supabaseUrl = 'https://kjoffilncbybquvjytxx.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqb2ZmaWxuY2J5YnF1dmp5dHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzM1MjgsImV4cCI6MjA5Njk0OTUyOH0.C7VSZspoYz_Qqc_cZBUCxA1citn301hub1o8NFcUefU';
+            const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const streamerId = urlParams.get('streamer') || 'default';
+            let streamerPayLink = "";
+
+            // Подтягиваем ссылку на донат стримера
+            if (supabase) {
+                const { data } = await supabase.from('profiles').select('external_pay_link').eq('id', streamerId).single();
+                if (data && data.external_pay_link) {
+                    streamerPayLink = data.external_pay_link;
+                }
+            }
+
+            const mainFormUI = document.getElementById('main-form-ui');
+            const waitingUI = document.getElementById('waiting-ui');
+            const liveRoomUI = document.getElementById('live-room-ui');
+            const tabVideo = document.getElementById('tab-video');
+            const tabCostream = document.getElementById('tab-costream');
+            const videoSection = document.getElementById('video-section');
+            const costreamSection = document.getElementById('costream-section');
+            const videoElement = document.getElementById('camera-feed');
+            const submitBtn = document.getElementById('submit-btn');
+            const recordBtn = document.getElementById('record-btn');
+            const recordBtnContainer = document.getElementById('record-btn-container');
+            const timerDisplay = document.getElementById('timer-display');
+            const retakeBtn = document.getElementById('retake-btn');
+
+            let currentTab = 'video';
+            let localStream = null, mediaRecorder, timerInterval, recordedChunks = [];
+            let isRecording = false, timeLeft = 15, finalVideoBlob = null;
+
+            tabVideo.addEventListener('click', () => switchTab('video'));
+            tabCostream.addEventListener('click', () => switchTab('costream'));
+            recordBtn.addEventListener('click', toggleRecording);
+            retakeBtn.addEventListener('click', retakeVideo);
+
+            function switchTab(tab) {
+                currentTab = tab;
+                if (tab === 'video') {
+                    tabVideo.className = 'tab-btn active-tab'; tabCostream.className = 'tab-btn inactive-tab';
+                    videoSection.classList.remove('hidden'); costreamSection.classList.add('hidden');
+                    if (!finalVideoBlob) startCamera();
+                } else {
+                    tabCostream.className = 'tab-btn active-tab'; tabVideo.className = 'tab-btn inactive-tab';
+                    costreamSection.classList.remove('hidden'); videoSection.classList.add('hidden');
+                    stopCamera();
+                    if (!videoElement.paused) videoElement.pause(); // 🔥 Фикс фантомного звука
+                }
+            }
+
+            async function startCamera() {
+                if (!navigator.mediaDevices) return;
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    videoElement.srcObject = localStream; videoElement.muted = true; await videoElement.play();
+                } catch (err) {}
+            }
+
+            function stopCamera() { if (localStream) { localStream.getTracks().forEach(t => t.stop()); videoElement.srcObject = null; } }
+            function toggleRecording() { isRecording ? stopRecording() : startRecording(); }
+
+            function startRecording() {
+                if (!localStream) return;
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(localStream);
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    finalVideoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+                    videoElement.srcObject = null; videoElement.src = URL.createObjectURL(finalVideoBlob);
+                    videoElement.muted = false; videoElement.controls = true; videoElement.play();
+                    recordBtnContainer.classList.add('hidden'); timerDisplay.classList.add('hidden'); retakeBtn.classList.remove('hidden');
+                };
+                mediaRecorder.start();
+                isRecording = true; timeLeft = 15; recordBtn.classList.add('recording-pulse');
+                timerDisplay.classList.remove('hidden'); timerDisplay.innerText = `00:${timeLeft}`;
+                timerInterval = setInterval(() => {
+                    timeLeft--; timerDisplay.innerText = `00:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+                    if (timeLeft <= 0) stopRecording();
+                }, 1000);
+            }
+
+            function stopRecording() { if (mediaRecorder) mediaRecorder.stop(); isRecording = false; clearInterval(timerInterval); recordBtn.classList.remove('recording-pulse'); }
+            function retakeVideo() { finalVideoBlob = null; videoElement.src = ""; videoElement.controls = false; recordBtnContainer.classList.remove('hidden'); retakeBtn.classList.add('hidden'); startCamera(); }
+
+            startCamera();
+
+            submitBtn.addEventListener('click', async () => {
+                if (!supabase) return alert("Database error!");
+                let nickname = document.getElementById('nickname').value.trim() || "Anonymous";
+                
+                const badWords = ['fuck', 'bitch', 'asshole', 'хуй', 'пизд', 'шлюх'];
+                if (badWords.some(w => nickname.toLowerCase().includes(w))) return alert("⚠️ Keep it clean!");
+                if (currentTab === 'video' && !finalVideoBlob) return alert("Record a video first!");
+
+                submitBtn.innerText = "UPLOADING...";
+                submitBtn.disabled = true;
+
+                try {
+                    let generatedVideoHash = "costream_request";
+                    if (currentTab === 'video') {
+                        generatedVideoHash = `vid_${Date.now()}.mp4`;
+                        await supabase.storage.from('videos').upload(generatedVideoHash, finalVideoBlob, { contentType: 'video/mp4' });
+                    }
+
+                    const { data, error } = await supabase.from('donations').insert([{
+                        username: nickname, amount: 0, video_hash: generatedVideoHash, status: 'pending', streamer_id: streamerId
+                    }]).select();
+
+                    if (error) throw error;
+
+                    if (currentTab === 'costream') {
+                        mainFormUI.classList.add('hidden'); waitingUI.classList.remove('hidden'); stopCamera();
+                        listenForStreamerApproval(data[0].id);
+                    } else {
+                        // Редирект на платежку стримера
+                        if (streamerPayLink && streamerPayLink.includes("http")) {
+                            window.location.href = streamerPayLink;
+                        } else {
+                            alert("Success! Video sent to streamer.");
+                            retakeVideo(); submitBtn.innerText = "PROCEED TO PAYMENT"; submitBtn.disabled = false;
+                        }
+                    }
+                } catch (err) {
+                    alert("Error: " + err.message); submitBtn.innerText = "PROCEED TO PAYMENT"; submitBtn.disabled = false;
+                }
+            });
+
+            async function connectToLiveKit(token) {
+                try {
+                    const room = new LiveKitClient.Room();
+                    await room.connect('wss://whutcha-drgxd8d7.livekit.cloud', token);
+                    await room.localParticipant.enableCameraAndMicrophone();
+                    room.localParticipant.videoTrackPublications.values().next().value.track.attach(document.getElementById('local-video-container'));
+                    room.on('trackSubscribed', (track) => {
+                        if (track.kind === 'video') document.getElementById('remote-video-container').appendChild(track.attach());
+                        if (track.kind === 'audio') track.attach();
+                    });
+                } catch (error) {}
+            }
+
+            function listenForStreamerApproval(donationId) {
+                supabase.channel(`donation-${donationId}`).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'donations', filter: `id=eq.${donationId}` }, async payload => {
+                    if (payload.new.status === 'approved') {
+                        waitingUI.classList.add('hidden'); liveRoomUI.classList.remove('hidden');
+                        if (payload.new.join_token) await connectToLiveKit(payload.new.join_token);
+                    } else if (payload.new.status === 'rejected') {
+                        alert("The streamer declined your request.");
+                        window.location.reload();
+                    }
+                }).subscribe();
+            }
+        });
+    </script>
+</body>
+</html>
